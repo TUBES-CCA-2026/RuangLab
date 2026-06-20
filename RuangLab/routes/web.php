@@ -1,0 +1,49 @@
+<?php
+
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\LaboratoriumController as AdminLaboratoriumController;
+use App\Http\Controllers\Admin\ReservasiController as AdminReservasiController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LaboratoriumController;
+use App\Http\Controllers\ReservasiController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+*/
+
+// Halaman publik
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/laboratorium', [LaboratoriumController::class, 'index'])->name('laboratorium.index');
+Route::get('/laboratorium/{id}', [LaboratoriumController::class, 'show'])->name('laboratorium.show');
+
+// Auth
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+
+// Reservasi (perlu login)
+Route::middleware('auth')->group(function () {
+    Route::get('/reservasi', [ReservasiController::class, 'index'])->name('reservasi.index');
+    Route::get('/reservasi/buat', [ReservasiController::class, 'create'])->name('reservasi.create');
+    Route::post('/reservasi', [ReservasiController::class, 'store'])->name('reservasi.store');
+    Route::get('/reservasi/{id}', [ReservasiController::class, 'show'])->name('reservasi.show');
+});
+
+// Area admin
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    Route::resource('laboratorium', AdminLaboratoriumController::class)->except(['show']);
+
+    Route::get('/reservasi', [AdminReservasiController::class, 'index'])->name('reservasi.index');
+    Route::get('/reservasi/{id}', [AdminReservasiController::class, 'show'])->name('reservasi.show');
+    Route::patch('/reservasi/{id}/status', [AdminReservasiController::class, 'updateStatus'])->name('reservasi.updateStatus');
+});
