@@ -45,14 +45,20 @@ Route::middleware('auth')->group(function () {
 });
 
 // Area admin
+// Area admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('laboratorium', AdminLaboratoriumController::class)->except(['show']);
 
+    Route::get('/reservasi/export', [AdminReservasiController::class, 'export'])->name('reservasi.export');
+    Route::get('/reservasi/trashed', [AdminReservasiController::class, 'trashed'])->name('reservasi.trashed');
     Route::get('/reservasi', [AdminReservasiController::class, 'index'])->name('reservasi.index');
+
     Route::get('/reservasi/{id}', [AdminReservasiController::class, 'show'])->name('reservasi.show');
     Route::patch('/reservasi/{id}/status', [AdminReservasiController::class, 'updateStatus'])->name('reservasi.updateStatus');
+    Route::patch('/reservasi/{id}/restore', [AdminReservasiController::class, 'restore'])->name('reservasi.restore');
+    Route::delete('/reservasi/{id}/force-delete', [AdminReservasiController::class, 'forceDelete'])->name('reservasi.forceDelete');
 });
 
 Route::prefix('aslab')->name('aslab.')->middleware(['auth', 'aslab'])->group(function () {

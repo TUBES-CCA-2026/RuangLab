@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MstLaboratorium;
 use App\Models\TrxDetailReservasi;
+
 use App\Models\TrxReservasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -71,4 +72,36 @@ class ReservasiController extends Controller
 
         return view('reservasi.show', compact('reservasi'));
     }
+    public function trashed(Request $request)
+{
+    $query = TrxReservasi::onlyTrashed()->with(['user', 'detail.laboratorium']);
+
+    if ($request->filled('cari')) {
+        $query->where('kode_reservasi', 'like', '%' . $request->cari . '%');
+    }
+
+    $reservasis = $query->latest()->paginate(10)->withQueryString();
+
+    return view('admin.reservasi.trashed', compact('reservasis'));
+}
+
+// Restore (kembalikan) data yang dihapus
+public function restore($id)
+{
+    $reservasi = TrxReservasi::onlyTrashed()->findOrFail($id);
+    $reservasi->restore();
+
+    return redirect()->route('admin.reservasi.trashed')
+        ->with('success', 'Reservasi berhasil dipulihkan.');
+}
+
+// Hapus permanen
+public function forceDelete($id)
+{
+    $reservasi = TrxReservasi::onlyTrashed()->findOrFail($id);
+    $reservasi->forceDelete();
+
+    return redirect()->route('admin.reservasi.trashed')
+        ->with('success', 'Reservasi berhasil dihapus permanen.');
+}
 }

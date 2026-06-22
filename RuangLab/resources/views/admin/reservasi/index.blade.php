@@ -18,6 +18,31 @@
     </form>
 </div>
 
+<form method="GET" action="{{ route('admin.reservasi.export') }}" class="mb-3 d-flex gap-2 flex-wrap align-items-end">
+    <div>
+        <label class="form-label">Dari Tanggal</label>
+        <input type="date" name="dari" value="{{ request('dari') }}" class="form-control">
+    </div>
+    <div>
+        <label class="form-label">Sampai Tanggal</label>
+        <input type="date" name="sampai" value="{{ request('sampai') }}" class="form-control">
+    </div>
+    <div>
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select">
+            <option value="">-- Semua Status --</option>
+            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+            <option value="disetujui" {{ request('status') == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
+            <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+            <option value="sedang_dipakai" {{ request('status') == 'sedang_dipakai' ? 'selected' : '' }}>Sedang Dipakai</option>
+            <option value="hangus" {{ request('status') == 'hangus' ? 'selected' : '' }}>Hangus</option>
+        </select>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-success mt-4">⬇ Export Excel</button>
+    </div>
+</form>
+
 <div class="card table-card">
     <div class="table-responsive">
         <table class="table align-middle mb-0">
