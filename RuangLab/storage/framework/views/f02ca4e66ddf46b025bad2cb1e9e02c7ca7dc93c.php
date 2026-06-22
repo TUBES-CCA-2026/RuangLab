@@ -43,10 +43,41 @@
 
                 <p class="mb-0"><span class="fw-semibold">Keperluan:</span> <?php echo e($reservasi->keperluan); ?></p>
 
-                <?php if($reservasi->status === 'disetujui'): ?>
-                <div class="alert alert-success rounded-3 mt-3 mb-0">
-                    <i class="bi bi-key"></i> Kode check-in: <span class="fw-bold"><?php echo e($reservasi->kode_checkin); ?></span>
+                <?php if($reservasi->status === 'disetujui' || $reservasi->status === 'sedang_dipakai'): ?>
+                <hr>
+
+                
+                <h6 class="fw-semibold mb-3"><i class="bi bi-qr-code me-1"></i> QR Check-in</h6>
+                <div class="text-center bg-light rounded-3 p-4">
+
+                    <?php if($reservasi->status === 'sedang_dipakai'): ?>
+                        <div class="alert alert-info rounded-3 mb-3 small mb-3">
+                            <i class="bi bi-check-circle me-1"></i> Peminjam sudah check-in
+                            <?php if(!empty($reservasi->checked_in_at)): ?>
+                                pada <?php echo e(\Carbon\Carbon::parse($reservasi->checked_in_at)->translatedFormat('d M Y H:i')); ?>
+
+                            <?php endif; ?>.
+                        </div>
+                    <?php else: ?>
+                        <p class="small text-secondary mb-3 fw-semibold">
+                            Minta peminjam scan QR ini untuk check-in
+                        </p>
+                    <?php endif; ?>
+
+                    
+                    <div id="qrcode-admin" class="d-inline-block bg-white p-3 rounded-3"></div>
+
+                    
+                    <div class="mt-3 font-monospace fw-bold fs-5" style="letter-spacing:4px">
+                        <?php echo e($reservasi->kode_checkin); ?>
+
+                    </div>
+
+                    <button onclick="printQR()" class="btn btn-sm btn-outline-secondary mt-3">
+                        <i class="bi bi-printer me-1"></i> Cetak QR
+                    </button>
                 </div>
+                
                 <?php endif; ?>
             </div>
         </div>
@@ -80,6 +111,59 @@
         </div>
     </div>
 </div>
+
+<?php if($reservasi->status === 'disetujui' || $reservasi->status === 'sedang_dipakai'): ?>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+    // URL yang disisipkan ke dalam QR. Saat peminjam scan, browser mereka
+    // membuka URL ini (otomatis ke endpoint check-in).
+    const checkinUrl = window.location.origin + '/reservasi/checkin/<?php echo e($reservasi->kode_checkin); ?>';
+
+    document.addEventListener('DOMContentLoaded', function () {
+        new QRCode(document.getElementById('qrcode-admin'), {
+            text: checkinUrl,
+            width: 200,
+            height: 200,
+            colorDark: "#10172a",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+        });
+    });
+
+    function printQR() {
+        const qrHtml = document.getElementById('qrcode-admin').innerHTML;
+        const kode   = <?php echo json_encode($reservasi->kode_checkin, 15, 512) ?>;
+        const noRes  = <?php echo json_encode($reservasi->kode_reservasi, 15, 512) ?>;
+        const nama   = <?php echo json_encode($reservasi->user->nama ?? '', 15, 512) ?>;
+        const win    = window.open('', '_blank');
+
+        win.document.write(`
+            <html>
+            <head>
+                <title>Cetak QR - ${noRes}</title>
+                <style>
+                    body { font-family: sans-serif; text-align: center; padding: 40px; }
+                    h3   { margin-bottom: 4px; }
+                    p    { color: #666; font-size: 13px; margin: 4px 0; }
+                    .kode { font-size: 20px; font-weight: bold; font-family: monospace; margin-top: 12px; letter-spacing: 4px; }
+                    img, canvas { max-width: 260px; }
+                </style>
+            </head>
+            <body>
+                <h3>QR Check-in Reservasi</h3>
+                <p>${noRes}</p>
+                <p>${nama}</p>
+                ${qrHtml}
+                <div class="kode">${kode}</div>
+                <script>window.print(); window.close();<\/script>
+            </body>
+            </html>
+        `);
+        win.document.close();
+    }
+</script>
+<?php endif; ?>
 
 <?php $__env->stopSection(); ?>
 

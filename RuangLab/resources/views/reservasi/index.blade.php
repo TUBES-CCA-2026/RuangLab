@@ -27,7 +27,7 @@
                     <table class="table align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Kode Reservasi</th>
+                                 <th>Kode Reservasi</th>
                                 <th>Laboratorium</th>
                                 <th>Tanggal Pakai</th>
                                 <th>Status</th>

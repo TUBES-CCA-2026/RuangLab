@@ -45,4 +45,9 @@ class MstUser extends Authenticatable
     {
         return $this->role && strtolower($this->role->nama_role) === 'admin';
     }
+    
+    public function isAslab()
+    {
+    return $this->role && strtolower($this->role->nama_role) === 'aslab';
+    }
 }

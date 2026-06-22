@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $adminRole = MstRole::firstOrCreate(['nama_role' => 'admin']);
         MstRole::firstOrCreate(['nama_role' => 'dosen']);
         MstRole::firstOrCreate(['nama_role' => 'mahasiswa']);
+        $aslabRole = MstRole::firstOrCreate(['nama_role' => 'aslab']);
 
         // Buat akun admin default
         MstUser::firstOrCreate(
@@ -32,6 +33,16 @@ class DatabaseSeeder extends Seeder
                 'id_role' => $adminRole->id,
                 'status' => 1,
             ]
+        );
+        MstUser::firstOrCreate(
+            ['email' => 'aslab@ruanglab.test'],
+            [
+                'nama' => 'Asisten Lab',
+                'password' => Hash::make('password'),
+                'no_telp' => '081234567891',
+                'id_role' => $aslabRole->id,
+                'status' => 1,
+        ]
         );
     }
 }
