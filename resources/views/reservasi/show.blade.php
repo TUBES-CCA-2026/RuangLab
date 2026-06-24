@@ -144,7 +144,7 @@
         } catch (e) { sameOrigin = false; }
 
         if (!sameOrigin) {
-            setStatus('QR tidak dikenali. Pastikan ini QR dari RuangLab.', 'text-danger');
+            setStatus('QR tidak dikenali, Pastikan ini QR dari RuangLab.', 'text-danger');
             return;
         }
 

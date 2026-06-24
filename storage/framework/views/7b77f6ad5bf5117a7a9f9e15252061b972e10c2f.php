@@ -63,7 +63,7 @@
     <div class="container py-4">
         <div class="text-center mb-5">
             <h2 class="fw-bold">Bagaimana Cara Kerjanya?</h2>
-            <p class="text-secondary">Tiga langkah sederhana untuk mendapatkan ruang lab yang kamu butuhkan</p>
+            <p class="text-secondary">Tiga langkah sederhana untuk mendapatkan ruangan laboratorium yang kamu butuhkan</p>
         </div>
         <div class="row g-4">
             <div class="col-md-4">
