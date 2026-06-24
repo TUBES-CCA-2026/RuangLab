@@ -11,7 +11,7 @@
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb small">
                 <li class="breadcrumb-item"><a href="{{ route('aslab.reservasi.index') }}">Riwayat Reservasi</a></li>
-                <li class="breadcrumb-item active">{{ $reservasi->kode_reservasi }}</li>
+                <li class="breadcrumb-item active">Detail Reservasi</li>
             </ol>
         </nav>
 
@@ -20,7 +20,7 @@
 
                 <div class="d-flex justify-content-between align-items-start mb-4">
                     <div>
-                        <h5 class="fw-bold mb-1">{{ $reservasi->kode_reservasi }}</h5>
+                        <h5 class="fw-bold mb-1">Detail Reservasi</h5>
                         <p class="text-secondary small mb-0">
                             Diajukan {{ \Carbon\Carbon::parse($reservasi->tanggal_pengajuan)->translatedFormat('d M Y') }}
                         </p>
@@ -69,10 +69,20 @@
                 </div>
                 @endif
 
-                <div class="mt-4">
+                <div class="mt-4 d-flex gap-2">
                     <a href="{{ route('aslab.reservasi.index') }}" class="btn btn-outline-secondary btn-sm">
-                        <i class="bi bi-arrow-left me-1"></i>Kembali ke Riwayat
+                        <i class="bi bi-arrow-left me-1"></i>Kembali
                     </a>
+                    @if($reservasi->status === 'pending')
+                    <a href="{{ route('aslab.reservasi.edit', $reservasi->id) }}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-pencil me-1"></i> Edit
+                    </a>
+                    <form method="POST" action="{{ route('aslab.reservasi.destroy', $reservasi->id) }}"
+                          onsubmit="return confirm('Hapus reservasi ini?')">
+                        @csrf @method('DELETE')
+                        <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash me-1"></i> Hapus</button>
+                    </form>
+                    @endif
                 </div>
             </div>
         </div>

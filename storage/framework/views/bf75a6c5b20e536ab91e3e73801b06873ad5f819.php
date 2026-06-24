@@ -156,14 +156,32 @@
         </a>
 
         <span class="nav-section">Reservasi Saya</span>
-        <a href="<?php echo e(route('aslab.reservasi.index')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.reservasi.*') ? 'active' : ''); ?>">
+        <a href="<?php echo e(route('aslab.reservasi.index')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.reservasi.index') ? 'active' : ''); ?>">
             <i class="bi bi-calendar-check"></i> Riwayat Reservasi
         </a>
         <a href="<?php echo e(route('aslab.reservasi.create')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.reservasi.create') ? 'active' : ''); ?>">
             <i class="bi bi-plus-circle"></i> Ajukan Reservasi
         </a>
 
+        <span class="nav-section">Verifikasi</span>
+        <a href="<?php echo e(route('aslab.verifikasi.index')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.verifikasi.*') ? 'active' : ''); ?>">
+            <i class="bi bi-clipboard-check"></i> Verifikasi
+        </a>
+        <a href="<?php echo e(route('aslab.history.index')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.history.*') ? 'active' : ''); ?>">
+            <i class="bi bi-clock-history"></i> Riwayat
+        </a>
+
         <hr class="border-secondary opacity-25 my-2">
+        <a href="<?php echo e(route('profile.show')); ?>" class="nav-link <?php echo e(request()->routeIs('profile.*') ? 'active' : ''); ?>">
+            <i class="bi bi-person-circle"></i> Profil Saya
+        </a>
+        <a href="<?php echo e(route('notifications.index')); ?>" class="nav-link <?php echo e(request()->routeIs('notifications.*') ? 'active' : ''); ?>">
+            <i class="bi bi-bell"></i> Notifikasi
+            <?php $unread = auth()->user()->unreadNotifications->count(); ?>
+            <?php if($unread > 0): ?>
+                <span class="badge bg-danger ms-1" style="font-size:.65rem;"><?php echo e($unread); ?></span>
+            <?php endif; ?>
+        </a>
         <a href="<?php echo e(route('home')); ?>" class="nav-link">
             <i class="bi bi-box-arrow-left"></i> Lihat Situs Publik
         </a>
@@ -186,8 +204,17 @@
         </div>
         <div class="d-flex align-items-center gap-2">
             <span class="role-chip d-none d-sm-inline"><i class="bi bi-star-fill me-1" style="font-size:.6rem;"></i>Asisten Lab</span>
-            <i class="bi bi-person-circle fs-5 text-secondary"></i>
-            <span class="fw-medium"><?php echo e(auth()->user()->nama); ?></span>
+            <a href="<?php echo e(route('notifications.index')); ?>" class="btn btn-light btn-sm position-relative">
+                <i class="bi bi-bell fs-5"></i>
+                <?php $unread = auth()->user()->unreadNotifications->count(); ?>
+                <?php if($unread > 0): ?>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:.6rem;"><?php echo e($unread); ?></span>
+                <?php endif; ?>
+            </a>
+            <a href="<?php echo e(route('profile.show')); ?>" class="d-flex align-items-center gap-2 text-decoration-none text-dark">
+                <i class="bi bi-person-circle fs-5 text-secondary"></i>
+                <span class="fw-medium"><?php echo e(auth()->user()->nama); ?></span>
+            </a>
         </div>
     </header>
 

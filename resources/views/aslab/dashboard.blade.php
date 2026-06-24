@@ -226,7 +226,7 @@
                         @php $detail = $r->detail->first(); @endphp
                         <div class="p-3 rounded-3 bg-light d-flex flex-column gap-1">
                             <div class="d-flex justify-content-between align-items-start">
-                                <span class="fw-semibold small">{{ $r->kode_reservasi }}</span>
+                                <span class="fw-semibold small">{{ $r->keperluan }}</span>
                                 <div class="d-flex align-items-center gap-1">
                                     @if($r->is_prioritas)
                                         <span class="badge-prioritas"><i class="bi bi-star-fill me-1" style="font-size:.55rem;"></i>Prioritas</span>

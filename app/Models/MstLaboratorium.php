@@ -30,4 +30,9 @@ class MstLaboratorium extends Model
     {
         return $this->hasMany(TrxDetailReservasi::class, 'id_ruangan');
     }
+
+    public function images()
+    {
+        return $this->hasMany(MstLaboratoriumImage::class, 'id_laboratorium')->orderBy('urutan');
+    }
 }

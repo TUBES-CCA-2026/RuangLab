@@ -12,7 +12,7 @@
                 <div class="d-flex justify-content-between align-items-start mb-4">
                     <div>
                         <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-                            <h5 class="fw-bold mb-0"><?php echo e($reservasi->kode_reservasi); ?></h5>
+                            <h5 class="fw-bold mb-0">Detail Reservasi</h5>
                             <?php if($reservasi->is_prioritas): ?>
                                 <span class="badge rounded-pill text-white px-2 py-1"
                                       style="font-size:.7rem;background:linear-gradient(135deg,#f59e0b,#ef4444);">
@@ -94,6 +94,25 @@
     </div>
 
     <div class="col-lg-5">
+        <div class="card table-card mb-4">
+            <div class="card-body p-4">
+                <h6 class="fw-semibold mb-3">Aksi Cepat</h6>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="<?php echo e(route('admin.reservasi.edit', $reservasi->id)); ?>" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-pencil me-1"></i> Edit Reservasi
+                    </a>
+                    <form method="POST" action="<?php echo e(route('admin.reservasi.destroy', $reservasi->id)); ?>"
+                          onsubmit="return confirm('Hapus reservasi ini permanen?')">
+                        <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+                        <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash me-1"></i> Hapus</button>
+                    </form>
+                    <a href="<?php echo e(route('admin.reservasi.index')); ?>" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i> Kembali
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <div class="card table-card">
             <div class="card-body p-4">
                 <h6 class="fw-semibold mb-3">Update Status</h6>
@@ -144,14 +163,13 @@
     function printQR() {
         const qrHtml = document.getElementById('qrcode-admin').innerHTML;
         const kode   = <?php echo json_encode($reservasi->kode_checkin, 15, 512) ?>;
-        const noRes  = <?php echo json_encode($reservasi->kode_reservasi, 15, 512) ?>;
         const nama   = <?php echo json_encode($reservasi->user->nama ?? '', 15, 512) ?>;
         const win    = window.open('', '_blank');
 
         win.document.write(`
             <html>
             <head>
-                <title>Cetak QR - ${noRes}</title>
+                <title>Cetak QR Check-in</title>
                 <style>
                     body { font-family: sans-serif; text-align: center; padding: 40px; }
                     h3   { margin-bottom: 4px; }
@@ -162,7 +180,6 @@
             </head>
             <body>
                 <h3>QR Check-in Reservasi</h3>
-                <p>${noRes}</p>
                 <p>${nama}</p>
                 ${qrHtml}
                 <div class="kode">${kode}</div>

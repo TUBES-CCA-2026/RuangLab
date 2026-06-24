@@ -28,7 +28,6 @@
             <table class="table align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Kode Reservasi</th>
                         <th>Laboratorium</th>
                         <th>Tanggal</th>
                         <th>Jam</th>
@@ -41,19 +40,14 @@
                     @php $d = $r->detail->first(); @endphp
                     <tr>
                         <td>
-                            <span class="fw-semibold">{{ $r->kode_reservasi }}</span>
+                            <span class="fw-semibold">{{ $d?->laboratorium->nama_lab ?? '-' }}</span>
                             @if($r->is_prioritas)
                                 <br><span class="badge-prioritas"><i class="bi bi-star-fill me-1" style="font-size:.5rem;"></i>Prioritas</span>
                             @endif
                         </td>
-                        <td>{{ $d->laboratorium->nama_lab ?? '-' }}</td>
                         <td>{{ $d ? \Carbon\Carbon::parse($d->tanggal_pakai)->translatedFormat('d M Y') : '-' }}</td>
                         <td class="text-nowrap">
-                            @if($d)
-                                {{ \Illuminate\Support\Str::substr($d->jam_mulai,0,5) }} – {{ \Illuminate\Support\Str::substr($d->jam_selesai,0,5) }}
-                            @else
-                                -
-                            @endif
+                            {{ $d ? \Illuminate\Support\Str::substr($d->jam_mulai,0,5).' – '.\Illuminate\Support\Str::substr($d->jam_selesai,0,5) : '-' }}
                         </td>
                         <td>
                             <span class="badge rounded-pill badge-status-{{ $r->status }} text-white px-3 py-2">
@@ -61,7 +55,15 @@
                             </span>
                         </td>
                         <td class="text-end">
-                            <a href="{{ route('aslab.reservasi.show', $r->id) }}" class="btn btn-sm btn-outline-primary">Detail</a>
+                            <a href="{{ route('aslab.reservasi.show', $r->id) }}" class="btn btn-sm btn-outline-primary me-1">Detail</a>
+                            @if($r->status === 'pending')
+                            <a href="{{ route('aslab.reservasi.edit', $r->id) }}" class="btn btn-sm btn-outline-secondary me-1"><i class="bi bi-pencil"></i></a>
+                            <form method="POST" action="{{ route('aslab.reservasi.destroy', $r->id) }}" class="d-inline"
+                                  onsubmit="return confirm('Hapus reservasi ini?')">
+                                @csrf @method('DELETE')
+                                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                            @endif
                         </td>
                     </tr>
                     @endforeach

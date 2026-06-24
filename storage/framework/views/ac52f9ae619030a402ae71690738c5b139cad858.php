@@ -27,19 +27,20 @@
                     <table class="table align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                 <th>Kode Reservasi</th>
                                 <th>Laboratorium</th>
                                 <th>Tanggal Pakai</th>
+                                <th>Jam</th>
                                 <th>Status</th>
                                 <th class="text-end">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php $__currentLoopData = $reservasis; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $r): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php $d = $r->detail->first(); ?>
                             <tr>
-                                <td class="fw-semibold"><?php echo e($r->kode_reservasi); ?></td>
-                                <td><?php echo e($r->detail->first()->laboratorium->nama_lab ?? '-'); ?></td>
-                                <td><?php echo e(optional($r->detail->first())->tanggal_pakai ? \Carbon\Carbon::parse($r->detail->first()->tanggal_pakai)->translatedFormat('d M Y') : '-'); ?></td>
+                                <td class="fw-semibold"><?php echo e($d?->laboratorium->nama_lab ?? '-'); ?></td>
+                                <td><?php echo e($d?->tanggal_pakai ? \Carbon\Carbon::parse($d->tanggal_pakai)->translatedFormat('d M Y') : '-'); ?></td>
+                                <td class="text-secondary small"><?php echo e($d ? \Illuminate\Support\Str::substr($d->jam_mulai,0,5).' - '.\Illuminate\Support\Str::substr($d->jam_selesai,0,5) : '-'); ?></td>
                                 <td>
                                     <span class="badge rounded-pill badge-status-<?php echo e($r->status); ?> text-white px-3 py-2">
                                         <?php echo e(ucwords(str_replace('_', ' ', $r->status))); ?>
@@ -47,9 +48,17 @@
                                     </span>
                                 </td>
                                 <td class="text-end">
-                                    <a href="<?php echo e(route('reservasi.show', $r->id)); ?>" class="btn btn-sm btn-outline-primary">
-                                        Detail
+                                    <a href="<?php echo e(route('reservasi.show', $r->id)); ?>" class="btn btn-sm btn-outline-primary me-1">Detail</a>
+                                    <?php if($r->status === 'pending'): ?>
+                                    <a href="<?php echo e(route('reservasi.edit', $r->id)); ?>" class="btn btn-sm btn-outline-secondary me-1">
+                                        <i class="bi bi-pencil"></i>
                                     </a>
+                                    <form method="POST" action="<?php echo e(route('reservasi.destroy', $r->id)); ?>" class="d-inline"
+                                          onsubmit="return confirm('Batalkan reservasi ini?')">
+                                        <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+                                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

@@ -22,6 +22,12 @@
             font-family: 'Poppins', sans-serif;
             background-color: var(--rl-bg);
             color: #1f2536;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex: 1;
         }
         .navbar-brand { font-weight: 800; letter-spacing: -0.5px; }
         .navbar-brand span { color: var(--rl-accent); }
@@ -104,6 +110,15 @@
                         </a>
                     </li>
                     <?php endif; ?>
+                    <li class="nav-item">
+                        <a href="<?php echo e(route('notifications.index')); ?>" class="btn btn-sm btn-outline-light position-relative">
+                            <i class="bi bi-bell"></i>
+                            <?php $unread = auth()->user()->unreadNotifications->count(); ?>
+                            <?php if($unread > 0): ?>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:.6rem;"><?php echo e($unread); ?></span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle"></i> <?php echo e(auth()->user()->nama); ?>
@@ -111,6 +126,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="<?php echo e(route('reservasi.index')); ?>">Reservasi Saya</a></li>
+                            <li><a class="dropdown-item" href="<?php echo e(route('profile.show')); ?>"><i class="bi bi-person me-1"></i>Profil Saya</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="<?php echo e(route('logout')); ?>" method="POST">

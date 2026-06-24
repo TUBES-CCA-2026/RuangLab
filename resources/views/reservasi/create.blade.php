@@ -55,8 +55,8 @@
                                     <input type="time" name="jam_mulai" value="{{ old('jam_mulai') }}" class="form-control" required>
                                 </div>
                                 <div class="col-6 mb-3">
-                                    <label class="form-label small fw-semibold">Jam Selesai</label>
-                                    <input type="time" name="jam_selesai" value="{{ old('jam_selesai') }}" class="form-control" required>
+                                    <label class="form-label small fw-semibold">Jam Selesai <span class="text-secondary">(maks. 18:10)</span></label>
+                                    <input type="time" name="jam_selesai" value="{{ old('jam_selesai') }}" class="form-control" max="18:10" required>
                                 </div>
                             </div>
 
