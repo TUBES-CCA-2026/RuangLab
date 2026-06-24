@@ -67,7 +67,7 @@ class AuthController extends Controller
     'email.unique' => 'Akun sudah digunakan. Silakan gunakan email lain.',
     'password.required' => 'Password wajib diisi.',
     'password.min' => 'Password minimal 8 karakter.',
-    'password.confirmed' => 'Konfirmasi password tidak cocok.',
+    'password.confirmed' => 'Konfirmasi password tidak selesai.',
     ]);
        
         $role = MstRole::whereRaw('LOWER(nama_role) = ?', ['mahasiswa'])->first()
