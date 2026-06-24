@@ -84,7 +84,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('home')->with('success', 'Pendaftaran berhasil! Selamat datang di RuangLab.');
+        return redirect()->route('home')->with('Sukses', 'Pendaftaran berhasil! Selamat datang di RuangLab.');
     }
 
     public function logout(Request $request)
