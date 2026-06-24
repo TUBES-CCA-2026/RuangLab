@@ -63,9 +63,8 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        // Pastikan role "mahasiswa" tersedia, fallback ke role pertama jika belum ada
-        $role = MstRole::whereRaw('LOWER(nama_role) = ?', ['mahasiswa'])->first()
-            ?? MstRole::first();
+        $role = MstRole::whereRaw('LOWER(nama_role) = ?', ['peminjam'])->first()
+    ?? MstRole::first();
 
         $user = MstUser::create([
             'nama' => $request->nama,

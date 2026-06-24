@@ -43,11 +43,16 @@ class MstUser extends Authenticatable
 
     public function isAdmin()
     {
-        return $this->role && strtolower($this->role->nama_role) === 'admin';
+        return $this->role && strtolower($this->role->nama_role) === 'laboran';
     }
-    
+
     public function isAslab()
     {
         return $this->role && strtolower($this->role->nama_role) === 'aslab';
+    }
+
+    public function isPeminjam()
+    {
+        return $this->role && strtolower($this->role->nama_role) === 'peminjam';
     }
 }
