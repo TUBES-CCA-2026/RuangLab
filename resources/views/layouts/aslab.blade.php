@@ -150,7 +150,7 @@
             <i class="bi bi-flask fs-4 text-info"></i>
             <span class="fs-5">Ruang<span>Lab</span></span>
         </a>
-        <span class="role-badge"><i class="bi bi-star-fill me-1" style="font-size:.6rem;"></i>Asisten Lab</span>
+        
     </div>
 
     <nav class="nav flex-column gap-1">
