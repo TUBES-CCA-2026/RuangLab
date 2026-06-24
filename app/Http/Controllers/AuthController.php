@@ -56,14 +56,20 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $request->validate([
-            'nama' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('mst_users', 'email')],
-            'no_telp' => ['nullable', 'string', 'max:20'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
 
-        // Pastikan role "mahasiswa" tersedia, fallback ke role pertama jika belum ada
+    $request->validate([
+    'nama' => ['required', 'string', 'max:255'],
+    'email' => ['required', 'email', 'max:255', Rule::unique('mst_users', 'email')],
+    'no_telp' => ['nullable', 'string', 'max:20'],
+    'password' => ['required', 'string', 'min:8', 'confirmed'],
+    ], [
+        
+    'email.unique' => 'Akun sudah digunakan.',
+    'password.required' => 'Password wajib diisi.',
+    'password.min' => 'Password minimal 8 karakter.',
+    'password.confirmed' => 'Konfirmasi password tidak cocok.',
+    ]);
+       
         $role = MstRole::whereRaw('LOWER(nama_role) = ?', ['mahasiswa'])->first()
             ?? MstRole::first();
 
