@@ -22,4 +22,28 @@ class MstUser extends Model
     {
         return $this->belongsTo(MstRole::class, 'role_id');
     }
+<<<<<<< HEAD
 }
+=======
+    
+    public function reservasi()
+    {
+        return $this->hasMany(TrxReservasi::class, 'id_user');
+    }
+
+    public function laboratoriumDikelola()
+    {
+        return $this->hasMany(MstLaboratorium::class, 'penanggung_jawab');
+    }
+
+    public function isAdmin()
+{
+    return $this->role->nama_role === 'laboran'; 
+}
+    
+    public function isAslab()
+    {
+        return $this->role && strtolower($this->role->nama_role) === 'aslab';
+    }
+}
+>>>>>>> 337a13c (feat: tambah fitur history reservasi role aslab dan perbaikan sidebar aslab)
