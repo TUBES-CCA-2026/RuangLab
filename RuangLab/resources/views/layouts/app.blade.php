@@ -22,6 +22,12 @@
             font-family: 'Poppins', sans-serif;
             background-color: var(--rl-bg);
             color: #1f2536;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex: 1;
         }
         .navbar-brand { font-weight: 800; letter-spacing: -0.5px; }
         .navbar-brand span { color: var(--rl-accent); }
@@ -97,13 +103,29 @@
                             <i class="bi bi-speedometer2"></i> Dashboard Laboran
                         </a>
                     </li>
+                    @elseif(auth()->user()->isAslab())
+                    <li class="nav-item">
+                        <a class="btn btn-sm btn-outline-light" href="{{ route('aslab.dashboard') }}">
+                            <i class="bi bi-speedometer2"></i> Dashboard Aslab
+                        </a>
+                    </li>
                     @endif
+                    <li class="nav-item">
+                        <a href="{{ route('notifications.index') }}" class="btn btn-sm btn-outline-light position-relative">
+                            <i class="bi bi-bell"></i>
+                            @php $unread = auth()->user()->unreadNotifications->count(); @endphp
+                            @if($unread > 0)
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:.6rem;">{{ $unread }}</span>
+                            @endif
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle"></i> {{ auth()->user()->nama }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{{ route('reservasi.index') }}">Reservasi Saya</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.show') }}"><i class="bi bi-person me-1"></i>Profil Saya</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST">

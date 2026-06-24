@@ -16,8 +16,13 @@ class TrxReservasi extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'id_user', 'kode_reservasi', 'kode_checkin', 'batas_checkin',
-        'waktu_checkin', 'tanggal_pengajuan', 'keperluan', 'status', 'catatan_admin'
+        'id_user', 'kode_checkin', 'batas_checkin',
+        'waktu_checkin', 'tanggal_pengajuan', 'keperluan', 'status', 'catatan_admin',
+        'is_prioritas', 'checked_in_at', 'checked_out_at',
+    ];
+
+    protected $casts = [
+        'is_prioritas' => 'boolean',
     ];
 
     public function user()

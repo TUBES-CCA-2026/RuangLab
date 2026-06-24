@@ -44,10 +44,8 @@ class VerifikasiController extends Controller
         }
 
         $reservasi->update([
-            'status'          => 'disetujui',
-            'id_verifikator'  => auth()->id(),
-            'kode_checkin'    => strtoupper(\Illuminate\Support\Str::random(8)),
-            'batas_checkin'   => now()->addMinutes(15),
+            'status'       => 'disetujui',
+            'batas_checkin' => now()->addMinutes(15),
         ]);
 
         return redirect()->route('aslab.verifikasi.index')
@@ -70,9 +68,8 @@ class VerifikasiController extends Controller
         }
 
         $reservasi->update([
-            'status'         => 'ditolak',
-            'id_verifikator' => auth()->id(),
-            'catatan_admin'  => $request->catatan_admin,
+            'status'        => 'ditolak',
+            'catatan_admin' => $request->catatan_admin,
         ]);
 
         return redirect()->route('aslab.verifikasi.index')
