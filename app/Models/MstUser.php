@@ -15,17 +15,21 @@ class MstUser extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
- protected $fillable = ['nama', 'email', 'password', 'no_telp', 'id_role', 'status'];
+    protected $fillable = [
+        'nama',
+        'email',
+        'password',
+        'no_telp',
+        'id_role',
+        'status'
+    ];
 
-    // relasi ke role
+    // Relasi ke role
     public function role()
     {
         return $this->belongsTo(MstRole::class, 'role_id');
     }
-<<<<<<< HEAD
-}
-=======
-    
+
     public function reservasi()
     {
         return $this->hasMany(TrxReservasi::class, 'id_user');
@@ -37,13 +41,12 @@ class MstUser extends Model
     }
 
     public function isAdmin()
-{
-    return $this->role->nama_role === 'laboran'; 
-}
-    
+    {
+        return $this->role && strtolower($this->role->nama_role) === 'laboran';
+    }
+
     public function isAslab()
     {
         return $this->role && strtolower($this->role->nama_role) === 'aslab';
     }
 }
->>>>>>> 337a13c (feat: tambah fitur history reservasi role aslab dan perbaikan sidebar aslab)
