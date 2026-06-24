@@ -142,7 +142,7 @@
 <section class="py-5">
     <div class="container py-4">
         <div class="rounded-xl hero-gradient text-white p-5 text-center">
-            <h3 class="fw-bold mb-2">Siap menggunakan laboratorium kampus?</h3>
+            <h3 class="fw-bold mb-2">Siap menggunakan Laboratorium kampus?</h3>
             <p class="text-white-50 mb-4">Daftar sekarang dan ajukan reservasi lab pertamamu hari ini.</p>
             @auth
                 <a href="{{ route('reservasi.create') }}" class="btn btn-light btn-lg fw-semibold px-4">Ajukan Reservasi</a>
