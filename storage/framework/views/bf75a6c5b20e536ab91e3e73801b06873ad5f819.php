@@ -135,6 +135,10 @@
             .aslab-sidebar.show { left: 0; }
             .aslab-content { margin-left: 0; }
         }
+        .bi-power { 
+            color: #e2483d;
+            
+        }
     </style>
     <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
@@ -187,7 +191,7 @@
         </a>
         <form action="<?php echo e(route('logout')); ?>" method="POST">
             <?php echo csrf_field(); ?>
-            <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent">
+            <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent text-danger">
                 <i class="bi bi-power"></i> Keluar
             </button>
         </form>
