@@ -63,8 +63,8 @@ class AuthController extends Controller
     'no_telp' => ['nullable', 'string', 'max:20'],
     'password' => ['required', 'string', 'min:8', 'confirmed'],
     ], [
-        
-    'email.unique' => 'Akun sudah digunakan.',
+
+    'email.unique' => 'Akun sudah digunakan. Silakan gunakan email lain.',
     'password.required' => 'Password wajib diisi.',
     'password.min' => 'Password minimal 8 karakter.',
     'password.confirmed' => 'Konfirmasi password tidak cocok.',
