@@ -56,22 +56,15 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        $request->validate([
+            'nama' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('mst_users', 'email')],
+            'no_telp' => ['nullable', 'string', 'max:20'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
 
-    $request->validate([
-    'nama' => ['required', 'string', 'max:255'],
-    'email' => ['required', 'email', 'max:255', Rule::unique('mst_users', 'email')],
-    'no_telp' => ['nullable', 'string', 'max:20'],
-    'password' => ['required', 'string', 'min:8', 'confirmed'],
-    ], [
-
-    'email.unique' => 'Akun sudah digunakan. Silakan gunakan email lain.',
-    'password.required' => 'Password wajib diisi.',
-    'password.min' => 'Password minimal 8 karakter.',
-    'password.confirmed' => 'Konfirmasi password tidak selesai.',
-    ]);
-       
-        $role = MstRole::whereRaw('LOWER(nama_role) = ?', ['mahasiswa'])->first()
-            ?? MstRole::first();
+        $role = MstRole::whereRaw('LOWER(nama_role) = ?', ['peminjam'])->first()
+    ?? MstRole::first();
 
         $user = MstUser::create([
             'nama' => $request->nama,
@@ -84,7 +77,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('home')->with('Sukses', 'Pendaftaran berhasil! Selamat datang di RuangLab.');
+        return redirect()->route('home')->with('success', 'Pendaftaran berhasil! Selamat datang di RuangLab.');
     }
 
     public function logout(Request $request)

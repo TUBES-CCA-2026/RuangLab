@@ -28,8 +28,17 @@ class ReservasiController extends Controller
             'tanggal_pakai' => ['required', 'date', 'after_or_equal:today'],
             'jam_mulai'     => ['required'],
             'jam_selesai'   => ['required', 'after:jam_mulai'],
+            'jam_selesai'   => ['required', 'after:jam_mulai'],
         ]);
 
+        // Kalau tanggal hari ini, jam mulai tidak boleh sudah lewat
+if ($validated['tanggal_pakai'] === now()->toDateString()) {
+    if ($validated['jam_mulai'] <= now()->format('H:i')) {
+        return back()->withInput()->withErrors([
+            'jam_mulai' => 'Jam mulai sudah lewat. Pilih jam yang belum terjadi hari ini.',
+        ]);
+    }
+}
         // Jam selesai maksimal 18:10
         if ($validated['jam_selesai'] > '18:10') {
             return back()->withInput()->withErrors([
