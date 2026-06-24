@@ -83,7 +83,7 @@
                         </div>
                         @elseif($reservasi->status === 'pending')
                         <div class="alert alert-warning rounded-3 mt-3">
-                            <i class="bi bi-hourglass-split"></i> Menunggu persetujuan admin.
+                            <i class="bi bi-hourglass-split"></i> Menunggu persetujuan Admin.
                         </div>
                         @endif
 

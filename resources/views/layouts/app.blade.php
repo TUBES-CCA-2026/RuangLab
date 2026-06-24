@@ -172,7 +172,7 @@
         <div class="row g-4">
             <div class="col-md-4">
                 <h5 class="fw-bold text-white">Ruang<span class="text-info">Lab</span></h5>
-                <p class="small mb-0">Sistem reservasi laboratorium kampus yang mudah, cepat, dan transparan untuk mahasiswa dan dosen.</p>
+                <p class="small mb-0">Sistem reservasi laboratorium kampus yang mudah, cepat, dan transparan untuk Umum.</p>
             </div>
             <div class="col-md-4">
                 <h6 class="fw-semibold text-white mb-3">Tautan</h6>
