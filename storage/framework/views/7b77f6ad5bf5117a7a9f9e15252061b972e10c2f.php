@@ -9,7 +9,7 @@
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
             
-                <h1 class="display-5 fw-bold mb-3">Sistem Penjadwalan dan Reservasi Ruangan Laboratorium Berbasis Web</h1>
+                <h1 class="display-5 fw-bold mb-3">Sistem Penjadwalan dan Reservasi Ruangan Laboratorium</h1>
                 <p class="lead text-white-50 mb-4">
                     RuangLab membantu peminjam dan dosen mengajukan, melacak, dan mengelola
                     reservasi laboratorium secara online.
