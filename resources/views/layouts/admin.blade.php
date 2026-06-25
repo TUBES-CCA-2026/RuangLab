@@ -68,6 +68,9 @@
             .admin-sidebar.show { left: 0; }
             .admin-content { margin-left: 0; }
         }
+        .bi-power{
+            color:#e2483d;
+        }
     </style>
     @stack('styles')
 </head>
@@ -107,7 +110,7 @@
         </a>
         <form action="{{ route('logout') }}" method="POST">
             @csrf
-            <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent">
+            <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent text-danger">
                 <i class="bi bi-power"></i> Keluar
             </button>
         </form>
