@@ -63,7 +63,7 @@ class AuthController extends Controller
         'password' => ['required', 'string', 'min:8', 'confirmed'],
     ], [
         'nama.required'       => 'Nama lengkap wajib diisi.',
-        'email.required'      => 'Email wajib diisi.',
+        'email.required'      => 'Email wajib di isi.',
         'email.email'         => 'Format email tidak valid.',
         'email.unique'        => 'Email sudah digunakan.',
         'password.required'   => 'Kata sandi wajib diisi.',
