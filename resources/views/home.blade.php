@@ -8,9 +8,7 @@
     <div class="container py-5">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
-                <span class="badge bg-info bg-opacity-25 text-info border border-info rounded-pill px-3 py-2 mb-3">
-                    <i class="bi bi-stars"></i> Reservasi Lab Jadi Lebih Mudah
-                </span>
+              
                 <h1 class="display-5 fw-bold mb-3">Sistem Penjadwalan dan Reservasi Ruangan Laboratorium Berbasis Web</h1>
                 <p class="lead text-white-50 mb-4">
                     RuangLab membantu peminjam dan dosen mengajukan, melacak, dan mengelola
@@ -142,7 +140,7 @@
 <section class="py-5">
     <div class="container py-4">
         <div class="rounded-xl hero-gradient text-white p-5 text-center">
-            <h3 class="fw-bold mb-2">Siap menggunakan laboratorium kampus?</h3>
+            <h3 class="fw-bold mb-2">Siap menggunakan Laboratorium kampus?</h3>
             <p class="text-white-50 mb-4">Daftar sekarang dan ajukan reservasi lab pertamamu hari ini.</p>
             @auth
                 <a href="{{ route('reservasi.create') }}" class="btn btn-light btn-lg fw-semibold px-4">Ajukan Reservasi</a>

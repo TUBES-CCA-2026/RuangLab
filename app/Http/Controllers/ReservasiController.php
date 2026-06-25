@@ -12,9 +12,27 @@ use Illuminate\Support\Str;
 
 class ReservasiController extends Controller
 {
+    public function index(Request $request)
+    {
+        $query = TrxReservasi::where('id_user', Auth::id())
+            ->with('detail.laboratorium');
+
+        // Tab aktif = pending, disetujui, sedang_dipakai
+        // Tab history = ditolak, hangus, selesai
+        if ($request->get('tab') === 'history') {
+            $query->whereIn('status', ['ditolak', 'hangus', 'selesai']);
+        } else {
+            $query->whereIn('status', ['pending', 'disetujui', 'sedang_dipakai']);
+        }
+
+        $reservasis = $query->latest()->paginate(10)->withQueryString();
+
+        return view('reservasi.index', compact('reservasis'));
+    }
+
     public function create(Request $request)
     {
-        $labs = MstLaboratorium::where('status', true)->orderBy('nama_lab')->get();
+        $labs        = MstLaboratorium::where('status', true)->orderBy('nama_lab')->get();
         $labTerpilih = $request->get('lab');
 
         return view('reservasi.create', compact('labs', 'labTerpilih'));
@@ -30,14 +48,22 @@ class ReservasiController extends Controller
             'jam_selesai'   => ['required', 'after:jam_mulai'],
         ]);
 
-        // Jam selesai maksimal 18:10
+        // Kalau tanggal hari ini, jam mulai tidak boleh sudah lewat
+        if ($validated['tanggal_pakai'] === now()->toDateString()) {
+            if ($validated['jam_mulai'] <= now()->format('H:i')) {
+                return back()->withInput()->withErrors([
+                    'jam_mulai' => 'Jam mulai sudah lewat. Pilih jam yang belum terjadi hari ini.',
+                ]);
+            }
+        }
+
         if ($validated['jam_selesai'] > '18:10') {
             return back()->withInput()->withErrors([
                 'jam_selesai' => 'Reservasi hanya dapat dilakukan hingga pukul 18:10.',
             ]);
         }
 
-        // Cek duplikat reservasi user yang sama pada slot yang sama
+        // Cek duplikat reservasi user yang sama
         $duplikat = TrxDetailReservasi::where('id_ruangan', $validated['id_ruangan'])
             ->where('tanggal_pakai', $validated['tanggal_pakai'])
             ->whereHas('reservasi', function ($q) {
@@ -99,17 +125,7 @@ class ReservasiController extends Controller
         });
 
         return redirect()->route('reservasi.index')
-            ->with('success', 'Pengajuan reservasi berhasil dikirim. Mohon tunggu persetujuan admin.');
-    }
-
-    public function index()
-    {
-        $reservasis = TrxReservasi::where('id_user', Auth::id())
-            ->with('detail.laboratorium')
-            ->latest()
-            ->paginate(10);
-
-        return view('reservasi.index', compact('reservasis'));
+            ->with('success', 'Pengajuan reservasi berhasil dikirim. Mohon tunggu persetujuan laboran.');
     }
 
     public function show($id)
@@ -153,7 +169,6 @@ class ReservasiController extends Controller
             ]);
         }
 
-        // Cek bentrok (kecuali reservasi ini sendiri)
         $bentrok = TrxDetailReservasi::where('id_ruangan', $validated['id_ruangan'])
             ->where('tanggal_pakai', $validated['tanggal_pakai'])
             ->where('id_reservasi', '!=', $reservasi->id)

@@ -56,16 +56,23 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $request->validate([
-            'nama' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('mst_users', 'email')],
-            'no_telp' => ['nullable', 'string', 'max:20'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+         $request->validate([
+        'nama' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'email:rfc,dns', 'max:255', Rule::unique('mst_users', 'email')],
+        'no_telp' => ['nullable', 'string', 'max:20'],
+        'password' => ['required', 'string', 'min:8', 'confirmed'],
+    ], [
+        'nama.required'       => 'Nama lengkap wajib diisi.',
+        'email.required'      => 'Email wajib di isi.',
+        'email.email'         => 'Format email tidak valid.',
+        'email.unique'        => 'Email sudah digunakan.',
+        'password.required'   => 'Kata sandi wajib diisi.',
+        'password.min'        => 'Kata sandi harus minimal 8 karakter.',
+        'password.confirmed'  => 'Konfirmasi kata sandi tidak cocok.',
+    ]);
 
-        // Pastikan role "mahasiswa" tersedia, fallback ke role pertama jika belum ada
-        $role = MstRole::whereRaw('LOWER(nama_role) = ?', ['mahasiswa'])->first()
-            ?? MstRole::first();
+        $role = MstRole::whereRaw('LOWER(nama_role) = ?', ['peminjam'])->first()
+    ?? MstRole::first();
 
         $user = MstUser::create([
             'nama' => $request->nama,

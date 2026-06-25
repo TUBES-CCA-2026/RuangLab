@@ -52,7 +52,8 @@
                             <div class="row">
                                 <div class="col-6 mb-3">
                                     <label class="form-label small fw-semibold">Jam Mulai</label>
-                                    <input type="time" name="jam_mulai" value="{{ old('jam_mulai') }}" class="form-control" required>
+                                    <input type="time" name="jam_mulai" value="{{ old('jam_mulai') }}"
+       class="form-control" id="jam_mulai" required>
                                 </div>
                                 <div class="col-6 mb-3">
                                     <label class="form-label small fw-semibold">Jam Selesai <span class="text-secondary">(maks. 18:10)</span></label>
@@ -74,4 +75,26 @@
         </div>
     </div>
 </section>
+@push('scripts')
+<script>
+    // Kalau tanggal dipilih = hari ini, set min jam mulai = sekarang
+    const tanggalInput = document.querySelector('input[name="tanggal_pakai"]');
+    const jamMulaiInput = document.getElementById('jam_mulai');
+
+    function updateMinJam() {
+        const today = new Date().toISOString().split('T')[0];
+        if (tanggalInput.value === today) {
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            jamMulaiInput.min = hh + ':' + mm;
+        } else {
+            jamMulaiInput.min = '';
+        }
+    }
+
+    tanggalInput.addEventListener('change', updateMinJam);
+    updateMinJam(); // jalankan saat halaman pertama dibuka
+</script>
+@endpush
 @endsection

@@ -17,32 +17,33 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // Buat role dasar
-        $adminRole = MstRole::firstOrCreate(['nama_role' => 'admin']);
-        MstRole::firstOrCreate(['nama_role' => 'dosen']);
-        MstRole::firstOrCreate(['nama_role' => 'mahasiswa']);
-        $aslabRole = MstRole::firstOrCreate(['nama_role' => 'aslab']);
 
-        // Buat akun admin default
-        MstUser::firstOrCreate(
-            ['email' => 'admin@ruanglab.test'],
-            [
-                'nama' => 'Laboran',
-                'password' => Hash::make('password'),
-                'no_telp' => '081234567890',
-                'id_role' => $adminRole->id,
-                'status' => 1,
-            ]
-        );
-        MstUser::firstOrCreate(
-            ['email' => 'aslab@ruanglab.test'],
-            [
-                'nama' => 'Asisten Lab',
-                'password' => Hash::make('password'),
-                'no_telp' => '081234567891',
-                'id_role' => $aslabRole->id,
-                'status' => 1,
+
+    $laboranRole = MstRole::firstOrCreate(['nama_role' => 'laboran']);
+    $aslabRole   = MstRole::firstOrCreate(['nama_role' => 'aslab']);
+    MstRole::firstOrCreate(['nama_role' => 'peminjam']);
+
+    MstUser::firstOrCreate(
+        ['email' => 'laboran@ruanglab.test'],
+        [
+            'nama'     => 'Laboran',
+            'password' => Hash::make('password'),
+            'no_telp'  => '081234567890',
+            'id_role'  => $laboranRole->id,
+            'status'   => 1,
         ]
-        );
-    }
+    );
+
+    MstUser::firstOrCreate(
+        ['email' => 'aslab@ruanglab.test'],
+        [
+            'nama'     => 'Asisten Lab',
+            'password' => Hash::make('password'),
+            'no_telp'  => '081234567891',
+            'id_role'  => $aslabRole->id,
+            'status'   => 1,
+        ]
+    );
 }
+    }
+

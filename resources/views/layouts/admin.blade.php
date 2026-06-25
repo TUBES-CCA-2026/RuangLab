@@ -68,6 +68,9 @@
             .admin-sidebar.show { left: 0; }
             .admin-content { margin-left: 0; }
         }
+        .bi-power{
+            color:#e2483d;
+        }
     </style>
     @stack('styles')
 </head>
@@ -88,6 +91,9 @@
         <a href="{{ route('admin.reservasi.index') }}" class="nav-link {{ request()->routeIs('admin.reservasi.*') ? 'active' : '' }}">
             <i class="bi bi-calendar-check"></i> Reservasi
         </a>
+        <a href="{{ route('admin.history.index') }}" class="nav-link {{ request()->routeIs('admin.history.*') ? 'active' : '' }}">
+    <i class="bi bi-clock-history"></i> History Reservasi
+</a>
         <a href="{{ route('admin.user.index') }}" class="nav-link {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
             <i class="bi bi-people"></i> Pengguna
         </a>
@@ -107,7 +113,7 @@
         </a>
         <form action="{{ route('logout') }}" method="POST">
             @csrf
-            <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent">
+            <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent text-danger">
                 <i class="bi bi-power"></i> Keluar
             </button>
         </form>

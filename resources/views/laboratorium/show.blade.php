@@ -14,14 +14,47 @@
         </nav>
 
         <div class="row g-4">
-            <div class="col-lg-7">
-                @if($lab->image)
-                    <img src="{{ asset('storage/' . $lab->image) }}" class="w-100 rounded-xl mb-4" style="height: 320px; object-fit: cover;" alt="{{ $lab->nama_lab }}">
-                @else
-                    <div class="w-100 rounded-xl mb-4 d-flex align-items-center justify-content-center bg-light" style="height: 320px;">
-                        <i class="bi bi-building" style="font-size: 4rem; color: var(--rl-primary); opacity: .4;"></i>
-                    </div>
-                @endif
+           {{-- Carousel Foto Lab --}}
+@php
+    $semuaFoto = collect();
+    if($lab->image) $semuaFoto->push($lab->image);
+    foreach($lab->images as $img) $semuaFoto->push($img->image_path);
+@endphp
+
+@if($semuaFoto->isNotEmpty())
+<div id="carouselLab" class="carousel slide rounded-xl mb-4 overflow-hidden" data-bs-ride="carousel" style="height:320px;">
+    <div class="carousel-inner h-100">
+        @foreach($semuaFoto as $index => $foto)
+        <div class="carousel-item h-100 {{ $index === 0 ? 'active' : '' }}">
+            <img src="{{ asset('storage/' . $foto) }}"
+                 class="d-block w-100 h-100"
+                 style="object-fit:cover;"
+                 alt="{{ $lab->nama_lab }}">
+        </div>
+        @endforeach
+    </div>
+
+    @if($semuaFoto->count() > 1)
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselLab" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselLab" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+    <div class="carousel-indicators">
+        @foreach($semuaFoto as $index => $foto)
+        <button type="button" data-bs-target="#carouselLab"
+                data-bs-slide-to="{{ $index }}"
+                class="{{ $index === 0 ? 'active' : '' }}"></button>
+        @endforeach
+    </div>
+    @endif
+</div>
+@else
+<div class="w-100 rounded-xl mb-4 d-flex align-items-center justify-content-center bg-light" style="height: 320px;">
+    <i class="bi bi-building" style="font-size: 4rem; color: var(--rl-primary); opacity: .4;"></i>
+</div>
+@endif
 
                 <h2 class="fw-bold mb-2">{{ $lab->nama_lab }}</h2>
                 <p class="text-secondary mb-4">

@@ -14,14 +14,47 @@
         </nav>
 
         <div class="row g-4">
-            <div class="col-lg-7">
-                <?php if($lab->image): ?>
-                    <img src="<?php echo e(asset('storage/' . $lab->image)); ?>" class="w-100 rounded-xl mb-4" style="height: 320px; object-fit: cover;" alt="<?php echo e($lab->nama_lab); ?>">
-                <?php else: ?>
-                    <div class="w-100 rounded-xl mb-4 d-flex align-items-center justify-content-center bg-light" style="height: 320px;">
-                        <i class="bi bi-building" style="font-size: 4rem; color: var(--rl-primary); opacity: .4;"></i>
-                    </div>
-                <?php endif; ?>
+           
+<?php
+    $semuaFoto = collect();
+    if($lab->image) $semuaFoto->push($lab->image);
+    foreach($lab->images as $img) $semuaFoto->push($img->image_path);
+?>
+
+<?php if($semuaFoto->isNotEmpty()): ?>
+<div id="carouselLab" class="carousel slide rounded-xl mb-4 overflow-hidden" data-bs-ride="carousel" style="height:320px;">
+    <div class="carousel-inner h-100">
+        <?php $__currentLoopData = $semuaFoto; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $foto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        <div class="carousel-item h-100 <?php echo e($index === 0 ? 'active' : ''); ?>">
+            <img src="<?php echo e(asset('storage/' . $foto)); ?>"
+                 class="d-block w-100 h-100"
+                 style="object-fit:cover;"
+                 alt="<?php echo e($lab->nama_lab); ?>">
+        </div>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    </div>
+
+    <?php if($semuaFoto->count() > 1): ?>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselLab" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselLab" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+    <div class="carousel-indicators">
+        <?php $__currentLoopData = $semuaFoto; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $foto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        <button type="button" data-bs-target="#carouselLab"
+                data-bs-slide-to="<?php echo e($index); ?>"
+                class="<?php echo e($index === 0 ? 'active' : ''); ?>"></button>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    </div>
+    <?php endif; ?>
+</div>
+<?php else: ?>
+<div class="w-100 rounded-xl mb-4 d-flex align-items-center justify-content-center bg-light" style="height: 320px;">
+    <i class="bi bi-building" style="font-size: 4rem; color: var(--rl-primary); opacity: .4;"></i>
+</div>
+<?php endif; ?>
 
                 <h2 class="fw-bold mb-2"><?php echo e($lab->nama_lab); ?></h2>
                 <p class="text-secondary mb-4">
