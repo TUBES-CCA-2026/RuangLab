@@ -1,7 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
 
+
+namespace App\Http\Controllers\Aslab;
+
+use App\Http\Controllers\Controller; // ← tambahkan baris ini
 use App\Models\MstLaboratorium;
 use App\Models\TrxDetailReservasi;
 use App\Models\TrxReservasi;

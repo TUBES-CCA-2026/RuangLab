@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller; // ← tambahkan baris ini
 use App\Models\MstLaboratorium;
 use App\Models\TrxDetailReservasi;
 use App\Models\TrxReservasi;
@@ -9,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-
 class ReservasiController extends Controller
 {
     public function index(Request $request)

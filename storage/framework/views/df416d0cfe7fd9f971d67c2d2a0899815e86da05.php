@@ -14,6 +14,21 @@
     </a>
 </div>
 
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link <?php echo e(request('tab','aktif')==='aktif' ? 'active fw-semibold' : ''); ?>"
+           href="<?php echo e(route('reservasi.index', ['tab'=>'aktif'])); ?>">
+            <i class="bi bi-hourglass-split me-1"></i> Aktif & Pending
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link <?php echo e(request('tab')==='history' ? 'active fw-semibold' : ''); ?>"
+           href="<?php echo e(route('reservasi.index', ['tab'=>'history'])); ?>">
+            <i class="bi bi-clock-history me-1"></i> Riwayat
+        </a>
+    </li>
+</ul>
+
 <?php if($reservasis->isEmpty()): ?>
     <div class="card table-card">
         <div class="card-body text-center py-5">

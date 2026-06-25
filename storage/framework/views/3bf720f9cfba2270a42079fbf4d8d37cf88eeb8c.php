@@ -91,6 +91,9 @@
         <a href="<?php echo e(route('admin.reservasi.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.reservasi.*') ? 'active' : ''); ?>">
             <i class="bi bi-calendar-check"></i> Reservasi
         </a>
+        <a href="<?php echo e(route('admin.history.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.history.*') ? 'active' : ''); ?>">
+    <i class="bi bi-clock-history"></i> History Reservasi
+</a>
         <a href="<?php echo e(route('admin.user.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.user.*') ? 'active' : ''); ?>">
             <i class="bi bi-people"></i> Pengguna
         </a>
