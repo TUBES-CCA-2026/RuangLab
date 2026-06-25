@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\CheckinController;
+
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\HistoryController as AdminHistoryController;
 use App\Http\Controllers\Admin\LaboratoriumController as AdminLaboratoriumController;
 use App\Http\Controllers\Admin\ReservasiController as AdminReservasiController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -78,7 +80,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::get('/reservasi/{id}', [AdminReservasiController::class, 'show'])->name('reservasi.show');
     Route::patch('/reservasi/{id}/status', [AdminReservasiController::class, 'updateStatus'])->name('reservasi.updateStatus');
 
+    // History laboran — dengan export
+    Route::get('/history', [AdminHistoryController::class, 'index'])->name('history.index');
+    Route::get('/history/export', [AdminHistoryController::class, 'export'])->name('history.export');
+
     // Manajemen pengguna (termasuk buat akun aslab)
+    // History laboran
+    Route::get('/history', [AdminHistoryController::class, 'index'])->name('history.index');
+    Route::get('/history/export', [AdminHistoryController::class, 'export'])->name('history.export');
     Route::resource('user', AdminUserController::class)->except(['show']);
 });
 

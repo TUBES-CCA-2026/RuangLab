@@ -3842,3 +3842,7 @@ Stack trace:
 #29 C:\\xampp\\htdocs\\RuangLab\\RuangLab\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(16): require_once('C:\\\\xampp\\\\htdocs...')
 #30 {main}
 "} 
+[2026-06-25 08:12:15] local.ERROR: Cannot declare class App\Http\Controllers\Admin\HistoryController, because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot declare class App\\Http\\Controllers\\Admin\\HistoryController, because the name is already in use at D:\\RuangLab\\app\\Http\\Controllers\\Aslab\\HistoryController.php:10)
+[stacktrace]
+#0 {main}
+"} 

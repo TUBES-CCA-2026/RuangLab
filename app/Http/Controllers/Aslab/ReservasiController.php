@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\Aslab;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\MstLaboratorium;
 use App\Models\TrxDetailReservasi;
 use App\Models\TrxReservasi;
@@ -13,22 +12,30 @@ use Illuminate\Support\Str;
 
 class ReservasiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $reservasis = TrxReservasi::where('id_user', Auth::id())
-            ->with('detail.laboratorium')
-            ->latest()
-            ->paginate(10);
+        $query = TrxReservasi::where('id_user', Auth::id())
+            ->with('detail.laboratorium');
 
-        return view('aslab.reservasi.index', compact('reservasis'));
+        // Tab aktif = pending, disetujui, sedang_dipakai
+        // Tab history = ditolak, hangus, selesai
+        if ($request->get('tab') === 'history') {
+            $query->whereIn('status', ['ditolak', 'hangus', 'selesai']);
+        } else {
+            $query->whereIn('status', ['pending', 'disetujui', 'sedang_dipakai']);
+        }
+
+        $reservasis = $query->latest()->paginate(10)->withQueryString();
+
+        return view('reservasi.index', compact('reservasis'));
     }
 
     public function create(Request $request)
     {
-        $labs = MstLaboratorium::where('status', true)->orderBy('nama_lab')->get();
+        $labs        = MstLaboratorium::where('status', true)->orderBy('nama_lab')->get();
         $labTerpilih = $request->get('lab');
 
-        return view('aslab.reservasi.create', compact('labs', 'labTerpilih'));
+        return view('reservasi.create', compact('labs', 'labTerpilih'));
     }
 
     public function store(Request $request)
@@ -41,13 +48,22 @@ class ReservasiController extends Controller
             'jam_selesai'   => ['required', 'after:jam_mulai'],
         ]);
 
+        // Kalau tanggal hari ini, jam mulai tidak boleh sudah lewat
+        if ($validated['tanggal_pakai'] === now()->toDateString()) {
+            if ($validated['jam_mulai'] <= now()->format('H:i')) {
+                return back()->withInput()->withErrors([
+                    'jam_mulai' => 'Jam mulai sudah lewat. Pilih jam yang belum terjadi hari ini.',
+                ]);
+            }
+        }
+
         if ($validated['jam_selesai'] > '18:10') {
             return back()->withInput()->withErrors([
                 'jam_selesai' => 'Reservasi hanya dapat dilakukan hingga pukul 18:10.',
             ]);
         }
 
-        // Cek duplikat reservasi aslab yang sama
+        // Cek duplikat reservasi user yang sama
         $duplikat = TrxDetailReservasi::where('id_ruangan', $validated['id_ruangan'])
             ->where('tanggal_pakai', $validated['tanggal_pakai'])
             ->whereHas('reservasi', function ($q) {
@@ -69,13 +85,11 @@ class ReservasiController extends Controller
             ]);
         }
 
-        // Cek apakah ada peminjam yang sudah disetujui di slot yang sama
-        // Jika ada, aslab tetap dibuat tapi statusnya pending (bukan auto-disetujui)
-        $adaPeminjamDisetujui = TrxDetailReservasi::where('id_ruangan', $validated['id_ruangan'])
+        // Cek bentrok dengan reservasi lain yang sudah disetujui
+        $bentrok = TrxDetailReservasi::where('id_ruangan', $validated['id_ruangan'])
             ->where('tanggal_pakai', $validated['tanggal_pakai'])
             ->whereHas('reservasi', function ($q) {
-                $q->whereIn('status', ['disetujui', 'sedang_dipakai'])
-                  ->where('is_prioritas', false);
+                $q->whereIn('status', ['disetujui', 'sedang_dipakai']);
             })
             ->where(function ($q) use ($validated) {
                 $q->whereBetween('jam_mulai', [$validated['jam_mulai'], $validated['jam_selesai']])
@@ -86,16 +100,19 @@ class ReservasiController extends Controller
                   });
             })->exists();
 
-        $status = $adaPeminjamDisetujui ? 'pending' : 'disetujui';
+        if ($bentrok) {
+            return back()->withInput()->withErrors([
+                'jam_mulai' => 'Laboratorium sudah dibooking pada waktu tersebut. Silakan pilih waktu lain.',
+            ]);
+        }
 
-        DB::transaction(function () use ($validated, $status, &$reservasi) {
+        DB::transaction(function () use ($validated, &$reservasi) {
             $reservasi = TrxReservasi::create([
                 'id_user'           => Auth::id(),
                 'kode_checkin'      => 'CHK-' . strtoupper(Str::random(6)),
                 'tanggal_pengajuan' => now()->toDateString(),
                 'keperluan'         => $validated['keperluan'],
-                'status'            => $status,
-                'is_prioritas'      => true,
+                'status'            => 'pending',
             ]);
 
             TrxDetailReservasi::create([
@@ -107,11 +124,8 @@ class ReservasiController extends Controller
             ]);
         });
 
-        $msg = $status === 'disetujui'
-            ? 'Reservasi berhasil dibuat dan langsung disetujui.'
-            : 'Reservasi dibuat dengan status pending karena slot sudah diisi peminjam yang disetujui.';
-
-        return redirect()->route('aslab.reservasi.index')->with('success', $msg);
+        return redirect()->route('reservasi.index')
+            ->with('success', 'Pengajuan reservasi berhasil dikirim. Mohon tunggu persetujuan laboran.');
     }
 
     public function show($id)
@@ -120,7 +134,7 @@ class ReservasiController extends Controller
             ->with('detail.laboratorium')
             ->findOrFail($id);
 
-        return view('aslab.reservasi.show', compact('reservasi'));
+        return view('reservasi.show', compact('reservasi'));
     }
 
     public function edit($id)
@@ -132,7 +146,7 @@ class ReservasiController extends Controller
 
         $labs = MstLaboratorium::where('status', true)->orderBy('nama_lab')->get();
 
-        return view('aslab.reservasi.edit', compact('reservasi', 'labs'));
+        return view('reservasi.edit', compact('reservasi', 'labs'));
     }
 
     public function update(Request $request, $id)
@@ -190,20 +204,20 @@ class ReservasiController extends Controller
             );
         });
 
-        return redirect()->route('aslab.reservasi.show', $reservasi->id)
+        return redirect()->route('reservasi.show', $reservasi->id)
             ->with('success', 'Reservasi berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
         $reservasi = TrxReservasi::where('id_user', Auth::id())
-            ->whereNotIn('status', ['sedang_dipakai'])
+            ->where('status', 'pending')
             ->findOrFail($id);
 
         $reservasi->detail()->delete();
         $reservasi->delete();
 
-        return redirect()->route('aslab.reservasi.index')
-            ->with('success', 'Reservasi berhasil dihapus.');
+        return redirect()->route('reservasi.index')
+            ->with('success', 'Reservasi berhasil dibatalkan.');
     }
 }

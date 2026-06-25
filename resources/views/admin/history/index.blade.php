@@ -1,4 +1,4 @@
-@extends('layouts.aslab')
+@extends('layouts.admin')
 
 @section('title', 'History Reservasi')
 @section('page-title', 'History Reservasi')
@@ -7,7 +7,7 @@
 
 <div class="card table-card mb-4">
     <div class="card-body p-4">
-        <form method="GET" action="{{ route('aslab.history.index') }}" class="row g-3 align-items-end">
+        <form method="GET" action="{{ route('admin.history.index') }}" class="row g-3 align-items-end">
             <div class="col-md-3">
                 <label class="form-label small fw-semibold">Cari Nama</label>
                 <input type="text" name="cari" value="{{ request('cari') }}" class="form-control" placeholder="Nama peminjam...">
@@ -41,7 +41,7 @@
             </div>
             <div class="col-md-1 d-flex gap-2">
                 <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i></button>
-                <a href="{{ route('aslab.history.index') }}" class="btn btn-outline-secondary w-100"><i class="bi bi-x-lg"></i></a>
+                <a href="{{ route('admin.history.index') }}" class="btn btn-outline-secondary w-100"><i class="bi bi-x-lg"></i></a>
             </div>
         </form>
     </div>
@@ -54,6 +54,9 @@
                 <i class="bi bi-clock-history me-2"></i>Riwayat Reservasi
                 <span class="badge bg-secondary ms-1">{{ $reservasis->total() }}</span>
             </h6>
+            <a href="{{ route('admin.history.export', request()->query()) }}" class="btn btn-success btn-sm">
+                <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export Excel
+            </a>
         </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -96,7 +99,7 @@
                             </span>
                         </td>
                         <td>
-                            <a href="{{ route('aslab.reservasi.show', $r->id) }}" class="btn btn-sm btn-outline-primary">
+                            <a href="{{ route('admin.reservasi.show', $r->id) }}" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-eye"></i>
                             </a>
                         </td>
