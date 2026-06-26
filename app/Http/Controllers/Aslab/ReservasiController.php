@@ -115,7 +115,7 @@ class ReservasiController extends Controller
                 'kode_checkin'      => 'CHK-' . strtoupper(Str::random(6)),
                 'tanggal_pengajuan' => now()->toDateString(),
                 'keperluan'         => $validated['keperluan'],
-                'status'            => 'pending',
+                'status'            => 'disetujui',
             ]);
 
             TrxDetailReservasi::create([
@@ -127,8 +127,8 @@ class ReservasiController extends Controller
             ]);
         });
 
-        return redirect()->route('reservasi.index')
-            ->with('success', 'Pengajuan reservasi berhasil dikirim. Mohon tunggu persetujuan laboran.');
+        return redirect()->route('aslab.dashboard')
+            ->with('success', 'Reservasi berhasil dibuat dan langsung disetujui.');
     }
 
     public function show($id)
