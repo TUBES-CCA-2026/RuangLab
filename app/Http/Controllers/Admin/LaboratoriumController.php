@@ -26,7 +26,7 @@ class LaboratoriumController extends Controller
 
     public function create()
     {
-        $penanggungJawabs = MstUser::orderBy('nama')->get();
+        $penanggungJawabs = MstUser::whereHas('role', fn($q) => $q->whereRaw('LOWER(nama_role) = ?', ['aslab']))->orderBy('nama')->get();
         return view('admin.laboratorium.create', compact('penanggungJawabs'));
     }
 
@@ -67,7 +67,7 @@ class LaboratoriumController extends Controller
     public function edit($id)
     {
         $lab = MstLaboratorium::with('images')->findOrFail($id);
-        $penanggungJawabs = MstUser::orderBy('nama')->get();
+        $penanggungJawabs = MstUser::whereHas('role', fn($q) => $q->whereRaw('LOWER(nama_role) = ?', ['aslab']))->orderBy('nama')->get();
         return view('admin.laboratorium.edit', compact('lab', 'penanggungJawabs'));
     }
 
