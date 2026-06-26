@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MstUser;
+use App\Notifications\ReservasiDibuat;
 use App\Models\MstLaboratorium;
 use App\Models\TrxDetailReservasi;
 use App\Models\TrxReservasi;
@@ -104,6 +106,17 @@ class ReservasiController extends Controller
             return back()->withInput()->withErrors([
                 'jam_mulai' => 'Laboratorium sudah dibooking pada waktu tersebut. Silakan pilih waktu lain.',
             ]);
+        }
+
+                // Kirim notifikasi ke semua laboran
+        $laboran = MstUser::whereHas('role', function ($q) {
+            $q->whereRaw('LOWER(nama_role) = ?', ['laboran']);
+        })->get();
+
+        foreach ($laboran as $l) {
+            try {
+                $l->notify(new ReservasiDibuat($reservasi->load('detail.laboratorium', 'user')));
+            } catch (\Exception $e) {}
         }
 
         DB::transaction(function () use ($validated, &$reservasi) {

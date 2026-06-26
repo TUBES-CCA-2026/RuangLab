@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Aslab;
 
+use App\Notifications\ReservasiStatusChanged;
 use App\Http\Controllers\Controller;
 use App\Models\TrxReservasi;
 use Illuminate\Http\Request;
@@ -35,6 +36,9 @@ class VerifikasiController extends Controller
     /**
      * Setujui reservasi → generate kode checkin
      */
+    
+
+
     public function setujui(Request $request, $id)
     {
         $reservasi = TrxReservasi::findOrFail($id);
@@ -47,6 +51,11 @@ class VerifikasiController extends Controller
             'status'       => 'disetujui',
             'batas_checkin' => now()->addMinutes(15),
         ]);
+        // Kirim notifikasi ke peminjam
+        try {
+            $reservasi->load('user', 'detail.laboratorium');
+            $reservasi->user->notify(new ReservasiStatusChanged($reservasi));
+        } catch (\Exception $e) {}
 
         return redirect()->route('aslab.verifikasi.index')
             ->with('success', 'Reservasi berhasil disetujui.');
@@ -71,7 +80,11 @@ class VerifikasiController extends Controller
             'status'        => 'ditolak',
             'catatan_admin' => $request->catatan_admin,
         ]);
-
+        // Kirim notifikasi ke peminjam
+        try {
+            $reservasi->load('user', 'detail.laboratorium');
+            $reservasi->user->notify(new ReservasiStatusChanged($reservasi));
+        } catch (\Exception $e) {}
         return redirect()->route('aslab.verifikasi.index')
             ->with('success', 'Reservasi berhasil ditolak.');
     }
