@@ -154,15 +154,16 @@
     </div>
 
     <nav class="nav flex-column gap-1">
-        
+        <span class="nav-section">Utama</span>
         <a href="<?php echo e(route('aslab.dashboard')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.dashboard') ? 'active' : ''); ?>">
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
 
-        
-        <a href="<?php echo e(route('aslab.verifikasi.index')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.verifikasi.*') ? 'active' : ''); ?>">
-            <i class="bi bi-clipboard-check"></i> Ajukan Reservasi
+        <span class="nav-section">Reservasi</span>
+        <a href="<?php echo e(route('aslab.reservasi.create')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.reservasi.create') ? 'active' : ''); ?>">
+            <i class="bi bi-plus-circle"></i> Ajukan Reservasi
         </a>
+
         <a href="<?php echo e(route('aslab.history.index')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.history.*') ? 'active' : ''); ?>">
             <i class="bi bi-clock-history"></i> Riwayat
         </a>

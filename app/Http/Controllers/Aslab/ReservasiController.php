@@ -38,7 +38,7 @@ class ReservasiController extends Controller
         $labs        = MstLaboratorium::where('status', true)->orderBy('nama_lab')->get();
         $labTerpilih = $request->get('lab');
 
-        return view('reservasi.create', compact('labs', 'labTerpilih'));
+        return view('aslab.reservasi.create', compact('labs', 'labTerpilih'));
     }
 
     public function store(Request $request)

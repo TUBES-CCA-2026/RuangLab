@@ -154,15 +154,16 @@
     </div>
 
     <nav class="nav flex-column gap-1">
-        
+        <span class="nav-section">Utama</span>
         <a href="{{ route('aslab.dashboard') }}" class="nav-link {{ request()->routeIs('aslab.dashboard') ? 'active' : '' }}">
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
 
-        
-        <a href="{{ route('aslab.verifikasi.index') }}" class="nav-link {{ request()->routeIs('aslab.verifikasi.*') ? 'active' : '' }}">
-            <i class="bi bi-clipboard-check"></i> Ajukan Reservasi
+        <span class="nav-section">Reservasi</span>
+        <a href="{{ route('aslab.reservasi.create') }}" class="nav-link {{ request()->routeIs('aslab.reservasi.create') ? 'active' : '' }}">
+            <i class="bi bi-plus-circle"></i> Ajukan Reservasi
         </a>
+
         <a href="{{ route('aslab.history.index') }}" class="nav-link {{ request()->routeIs('aslab.history.*') ? 'active' : '' }}">
             <i class="bi bi-clock-history"></i> Riwayat
         </a>
