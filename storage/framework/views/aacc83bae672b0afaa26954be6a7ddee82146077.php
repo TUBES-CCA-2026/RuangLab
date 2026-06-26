@@ -202,4 +202,4 @@
 <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
-<?php /**PATH D:\RuangLab\resources\views/layouts/app.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\xampp\htdocs\RuangLab\RuangLab\resources\views/layouts/app.blade.php ENDPATH**/ ?>

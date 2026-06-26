@@ -1,13 +1,13 @@
-@extends('layouts.app')
 
-@section('title', 'Detail Reservasi')
 
-@section('content')
+<?php $__env->startSection('title', 'Detail Reservasi'); ?>
+
+<?php $__env->startSection('content'); ?>
 <section class="py-5">
     <div class="container">
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb small">
-                <li class="breadcrumb-item"><a href="{{ route('reservasi.index') }}">Reservasi Saya</a></li>
+                <li class="breadcrumb-item"><a href="<?php echo e(route('reservasi.index')); ?>">Reservasi Saya</a></li>
                 <li class="breadcrumb-item active">Detail Reservasi</li>
             </ol>
         </nav>
@@ -19,35 +19,36 @@
                         <div class="d-flex justify-content-between align-items-start mb-4">
                             <div>
                                 <h4 class="fw-bold mb-1">Detail Reservasi</h4>
-                                <p class="text-secondary small mb-0">Diajukan {{ \Carbon\Carbon::parse($reservasi->tanggal_pengajuan)->translatedFormat('d M Y') }}</p>
+                                <p class="text-secondary small mb-0">Diajukan <?php echo e(\Carbon\Carbon::parse($reservasi->tanggal_pengajuan)->translatedFormat('d M Y')); ?></p>
                             </div>
-                            <span class="badge rounded-pill badge-status-{{ $reservasi->status }} text-white px-3 py-2">
-                                {{ ucwords(str_replace('_', ' ', $reservasi->status)) }}
+                            <span class="badge rounded-pill badge-status-<?php echo e($reservasi->status); ?> text-white px-3 py-2">
+                                <?php echo e(ucwords(str_replace('_', ' ', $reservasi->status))); ?>
+
                             </span>
                         </div>
 
                         <hr>
 
-                        @foreach($reservasi->detail as $d)
+                        <?php $__currentLoopData = $reservasi->detail; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $d): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="mb-3">
-                            <h6 class="fw-semibold mb-2"><i class="bi bi-building"></i> {{ $d->laboratorium->nama_lab ?? '-' }}</h6>
+                            <h6 class="fw-semibold mb-2"><i class="bi bi-building"></i> <?php echo e($d->laboratorium->nama_lab ?? '-'); ?></h6>
                             <ul class="list-unstyled small text-secondary mb-0">
-                                <li class="mb-1"><i class="bi bi-calendar3 me-1"></i> {{ \Carbon\Carbon::parse($d->tanggal_pakai)->translatedFormat('d F Y') }}</li>
-                                <li><i class="bi bi-clock me-1"></i> {{ \Illuminate\Support\Str::substr($d->jam_mulai,0,5) }} - {{ \Illuminate\Support\Str::substr($d->jam_selesai,0,5) }}</li>
+                                <li class="mb-1"><i class="bi bi-calendar3 me-1"></i> <?php echo e(\Carbon\Carbon::parse($d->tanggal_pakai)->translatedFormat('d F Y')); ?></li>
+                                <li><i class="bi bi-clock me-1"></i> <?php echo e(\Illuminate\Support\Str::substr($d->jam_mulai,0,5)); ?> - <?php echo e(\Illuminate\Support\Str::substr($d->jam_selesai,0,5)); ?></li>
                             </ul>
                         </div>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                         <hr>
 
-                        <p class="mb-1"><span class="fw-semibold">Keperluan:</span> {{ $reservasi->keperluan }}</p>
+                        <p class="mb-1"><span class="fw-semibold">Keperluan:</span> <?php echo e($reservasi->keperluan); ?></p>
 
-                        @if($reservasi->status === 'disetujui')
+                        <?php if($reservasi->status === 'disetujui'): ?>
                         <div class="alert alert-success rounded-3 mt-3">
                             <i class="bi bi-check-circle"></i> Reservasi disetujui! Saat tiba di lokasi, scan QR yang ditunjukkan laboran untuk check-in.
                         </div>
 
-                        {{-- ===== SCAN SECTION (PEMINJAM) ===== --}}
+                        
                         <div class="text-center mt-3 mb-2">
                             <div class="card border-0 bg-light rounded-3 p-4">
                                 <p class="small text-secondary mb-3 fw-semibold">
@@ -58,7 +59,7 @@
                                     <i class="bi bi-camera me-1"></i> Scan QR Check-in
                                 </button>
 
-                               {{-- Area kamera (disembunyikan sampai tombol ditekan) --}}
+                               
                                 <div id="scan-wrap" class="mt-3" style="display:none;">
                                     <div id="qr-reader" class="mx-auto" style="max-width:320px;"></div>
                                     <div id="scan-status" class="small mt-2 text-secondary"></div>
@@ -67,7 +68,7 @@
                                     </button>
                                 </div>
 
-                                {{-- Input manual kalau kamera gagal --}}
+                                
                                 <div id="manual-wrap" class="mt-3" style="display:none;">
                                     <p class="small text-secondary">Atau masukkan kode check-in secara manual:</p>
                                     <div class="input-group">
@@ -80,47 +81,48 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- ===== END SCAN SECTION ===== --}}
+                        
 
-                        @elseif($reservasi->status === 'sedang_dipakai')
+                        <?php elseif($reservasi->status === 'sedang_dipakai'): ?>
                         <div class="alert alert-info rounded-3 mt-3">
                             <i class="bi bi-check-circle"></i> Sudah check-in
-                            @if(!empty($reservasi->checked_in_at))
-                                pada {{ \Carbon\Carbon::parse($reservasi->checked_in_at)->translatedFormat('d M Y H:i') }}
-                            @endif. Ruangan sedang dipakai.
+                            <?php if(!empty($reservasi->checked_in_at)): ?>
+                                pada <?php echo e(\Carbon\Carbon::parse($reservasi->checked_in_at)->translatedFormat('d M Y H:i')); ?>
+
+                            <?php endif; ?>. Ruangan sedang dipakai.
                         </div>
-                        @elseif($reservasi->status === 'ditolak')
+                        <?php elseif($reservasi->status === 'ditolak'): ?>
                         <div class="alert alert-danger rounded-3 mt-3">
                             <i class="bi bi-x-circle"></i> Reservasi ditolak.
                         </div>
-                        @elseif($reservasi->status === 'pending')
+                        <?php elseif($reservasi->status === 'pending'): ?>
                         <div class="alert alert-warning rounded-3 mt-3">
                             <i class="bi bi-hourglass-split"></i> Menunggu persetujuan admin.
                         </div>
-                        @endif
+                        <?php endif; ?>
 
-                        @if($reservasi->catatan_admin)
+                        <?php if($reservasi->catatan_admin): ?>
                         <div class="mt-3">
                             <span class="fw-semibold small">Catatan Admin:</span>
-                            <p class="text-secondary small mb-0">{{ $reservasi->catatan_admin }}</p>
+                            <p class="text-secondary small mb-0"><?php echo e($reservasi->catatan_admin); ?></p>
                         </div>
-                        @endif
+                        <?php endif; ?>
 
-                        @if($reservasi->status === 'pending')
+                        <?php if($reservasi->status === 'pending'): ?>
                         <hr>
                         <div class="d-flex gap-2">
-                            <a href="{{ route('reservasi.edit', $reservasi->id) }}" class="btn btn-outline-primary btn-sm">
+                            <a href="<?php echo e(route('reservasi.edit', $reservasi->id)); ?>" class="btn btn-outline-primary btn-sm">
                                 <i class="bi bi-pencil me-1"></i> Edit
                             </a>
-                            <form method="POST" action="{{ route('reservasi.destroy', $reservasi->id) }}"
+                            <form method="POST" action="<?php echo e(route('reservasi.destroy', $reservasi->id)); ?>"
                                   onsubmit="return confirm('Batalkan reservasi ini?')">
-                                @csrf @method('DELETE')
+                                <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
                                 <button class="btn btn-outline-danger btn-sm">
                                     <i class="bi bi-trash me-1"></i> Batalkan
                                 </button>
                             </form>
                         </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -128,7 +130,7 @@
     </div>
 </section>
 
-@if($reservasi->status === 'disetujui')
+<?php if($reservasi->status === 'disetujui'): ?>
 <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
 (function () {
@@ -201,6 +203,8 @@
     });
 })();
 </script>
-@endif
+<?php endif; ?>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\RuangLab\RuangLab\resources\views/reservasi/show.blade.php ENDPATH**/ ?>
