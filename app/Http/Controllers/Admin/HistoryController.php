@@ -11,12 +11,19 @@ class HistoryController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TrxReservasi::with(['user', 'detail.laboratorium'])
+       if ($request->filled('status') && $request->status === 'deleted') {
+    $query = TrxReservasi::withTrashed()
+        ->with(['user', 'detail.laboratorium'])
+            ->whereNotNull('deleted_at');
+    } else {
+        $query = TrxReservasi::withTrashed()
+            ->with(['user', 'detail.laboratorium'])
             ->whereIn('status', ['disetujui', 'ditolak', 'sedang_dipakai', 'hangus', 'selesai']);
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
+    }
         if ($request->filled('cari')) {
             $query->whereHas('user', function ($q) use ($request) {
                 $q->where('nama', 'like', '%' . $request->cari . '%');
@@ -91,7 +98,26 @@ class HistoryController extends Controller
             }
             fclose($handle);
         };
+        
 
         return response()->stream($callback, 200, $headers);
     }
+    public function restore($id)
+{
+    $reservasi = TrxReservasi::withTrashed()->findOrFail($id);
+    $reservasi->restore();
+
+    return redirect()->route('admin.history.index')
+        ->with('success', 'Reservasi berhasil dikembalikan.');
+}
+
+public function forceDelete($id)
+{
+    $reservasi = TrxReservasi::withTrashed()->findOrFail($id);
+    $reservasi->detail()->forceDelete();
+    $reservasi->forceDelete();
+
+    return redirect()->route('admin.history.index')
+        ->with('success', 'Reservasi berhasil dihapus permanen.');
+}
 }

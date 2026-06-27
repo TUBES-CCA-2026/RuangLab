@@ -20,6 +20,7 @@
                     <option value="ditolak"        {{ request('status')==='ditolak'        ?'selected':'' }}>Ditolak</option>
                     <option value="sedang_dipakai" {{ request('status')==='sedang_dipakai' ?'selected':'' }}>Sedang Dipakai</option>
                     <option value="hangus"         {{ request('status')==='hangus'         ?'selected':'' }}>Hangus</option>
+                    <option value="deleted" {{ request('status')==='deleted' ?'selected':'' }}>Dihapus (Soft Delete)</option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -98,11 +99,34 @@
                                 {{ ucwords(str_replace('_',' ',$r->status)) }}
                             </span>
                         </td>
-                        <td>
-                            <a href="{{ route('admin.reservasi.show', $r->id) }}" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                        </td>
+                        <td class="d-flex gap-1">
+    <a href="{{ route('admin.reservasi.show', $r->id) }}" 
+       class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-eye"></i>
+    </a>
+
+    @if($r->deleted_at)
+    {{-- Tombol Restore --}}
+    <form method="POST" action="{{ route('admin.history.restore', $r->id) }}">
+        @csrf
+        <button type="submit" class="btn btn-sm btn-outline-success"
+                title="Kembalikan"
+                onclick="return confirm('Kembalikan reservasi ini?')">
+            <i class="bi bi-arrow-counterclockwise"></i>
+        </button>
+    </form>
+
+    {{-- Tombol Hapus Permanen --}}
+    <form method="POST" action="{{ route('admin.history.forceDelete', $r->id) }}">
+        @csrf @method('DELETE')
+        <button type="submit" class="btn btn-sm btn-outline-danger"
+                title="Hapus Permanen"
+                onclick="return confirm('Hapus permanen? Data tidak bisa dikembalikan!')">
+            <i class="bi bi-trash3-fill"></i>
+        </button>
+    </form>
+    @endif
+</td>
                     </tr>
                     @empty
                     <tr>

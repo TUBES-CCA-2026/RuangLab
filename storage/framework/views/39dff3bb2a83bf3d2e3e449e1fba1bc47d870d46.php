@@ -20,6 +20,7 @@
                     <option value="ditolak"        <?php echo e(request('status')==='ditolak'        ?'selected':''); ?>>Ditolak</option>
                     <option value="sedang_dipakai" <?php echo e(request('status')==='sedang_dipakai' ?'selected':''); ?>>Sedang Dipakai</option>
                     <option value="hangus"         <?php echo e(request('status')==='hangus'         ?'selected':''); ?>>Hangus</option>
+                    <option value="deleted" <?php echo e(request('status')==='deleted' ?'selected':''); ?>>Dihapus (Soft Delete)</option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -99,11 +100,34 @@
 
                             </span>
                         </td>
-                        <td>
-                            <a href="<?php echo e(route('admin.reservasi.show', $r->id)); ?>" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-eye"></i>
-                            </a>
-                        </td>
+                        <td class="d-flex gap-1">
+    <a href="<?php echo e(route('admin.reservasi.show', $r->id)); ?>" 
+       class="btn btn-sm btn-outline-primary">
+        <i class="bi bi-eye"></i>
+    </a>
+
+    <?php if($r->deleted_at): ?>
+    
+    <form method="POST" action="<?php echo e(route('admin.history.restore', $r->id)); ?>">
+        <?php echo csrf_field(); ?>
+        <button type="submit" class="btn btn-sm btn-outline-success"
+                title="Kembalikan"
+                onclick="return confirm('Kembalikan reservasi ini?')">
+            <i class="bi bi-arrow-counterclockwise"></i>
+        </button>
+    </form>
+
+    
+    <form method="POST" action="<?php echo e(route('admin.history.forceDelete', $r->id)); ?>">
+        <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+        <button type="submit" class="btn btn-sm btn-outline-danger"
+                title="Hapus Permanen"
+                onclick="return confirm('Hapus permanen? Data tidak bisa dikembalikan!')">
+            <i class="bi bi-trash3-fill"></i>
+        </button>
+    </form>
+    <?php endif; ?>
+</td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <tr>

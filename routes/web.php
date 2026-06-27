@@ -65,7 +65,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Area admin (laboran)
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('laboratorium', AdminLaboratoriumController::class)->except(['show']);
@@ -87,7 +87,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Manajemen pengguna (termasuk buat akun aslab)
     // History laboran
     Route::get('/history', [AdminHistoryController::class, 'index'])->name('history.index');
-    Route::get('/history/export', [AdminHistoryController::class, 'export'])->name('history.export');
+Route::get('/history/export', [AdminHistoryController::class, 'export'])->name('history.export');
+Route::post('/history/{id}/restore', [AdminHistoryController::class, 'restore'])->name('history.restore');
+Route::delete('/history/{id}/force-delete', [AdminHistoryController::class, 'forceDelete'])->name('history.forceDelete');
     Route::resource('user', AdminUserController::class)->except(['show']);
 });
 
