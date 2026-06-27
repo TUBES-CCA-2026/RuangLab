@@ -171,6 +171,28 @@ class ReservasiController extends Controller
         ]);
 
         $reservasi = TrxReservasi::with(['user', 'detail.laboratorium'])->findOrFail($id);
+
+        // Cek bentrok saat laboran menyetujui reservasi
+        if ($request->status === 'disetujui') {
+            $detail = $reservasi->detail->first();
+            if ($detail) {
+                $bentrok = TrxDetailReservasi::where('id_ruangan', $detail->id_ruangan)
+                    ->where('tanggal_pakai', $detail->tanggal_pakai)
+                    ->where('id_reservasi', '!=', $reservasi->id)
+                    ->whereHas('reservasi', fn($q) => $q->whereIn('status', ['disetujui', 'sedang_dipakai']))
+                    ->where(function ($q) use ($detail) {
+                        $q->whereBetween('jam_mulai', [$detail->jam_mulai, $detail->jam_selesai])
+                          ->orWhereBetween('jam_selesai', [$detail->jam_mulai, $detail->jam_selesai])
+                          ->orWhere(fn($q2) => $q2->where('jam_mulai', '<=', $detail->jam_mulai)
+                                                   ->where('jam_selesai', '>=', $detail->jam_selesai));
+                    })->exists();
+
+                if ($bentrok) {
+                    return back()->with('error', 'Tidak dapat menyetujui: lab sudah dibooking pada waktu yang sama.');
+                }
+            }
+        }
+
         $reservasi->update([
             'status'        => $request->status,
             'catatan_admin' => $request->catatan_admin,

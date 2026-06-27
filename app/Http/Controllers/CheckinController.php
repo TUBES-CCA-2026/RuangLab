@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TrxReservasi;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -77,6 +78,21 @@ class CheckinController extends Controller
                                 . str_replace('_', ' ', $reservasi->status) . ').',
                 'reservasi' => $reservasi,
             ]);
+        }
+
+        // Cek apakah sudah masuk waktu reservasi.
+        $detail = $reservasi->load('detail')->detail->first();
+        if ($detail) {
+            $jadwalMulai = Carbon::parse($detail->tanggal_pakai . ' ' . $detail->jam_mulai);
+            if (now()->lt($jadwalMulai)) {
+                return view('reservasi.checkin-result', [
+                    'ok'        => false,
+                    'message'   => 'Belum bisa check-in. Reservasi baru dimulai pada '
+                                    . $jadwalMulai->translatedFormat('d M Y') . ' pukul '
+                                    . substr($detail->jam_mulai, 0, 5) . '.',
+                    'reservasi' => $reservasi,
+                ]);
+            }
         }
 
         // Catat check-in.

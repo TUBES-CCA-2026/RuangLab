@@ -76,10 +76,8 @@ class ReservasiController extends Controller
             ->where(function ($q) use ($validated) {
                 $q->whereBetween('jam_mulai', [$validated['jam_mulai'], $validated['jam_selesai']])
                   ->orWhereBetween('jam_selesai', [$validated['jam_mulai'], $validated['jam_selesai']])
-                  ->orWhere(function ($q2) use ($validated) {
-                      $q2->where('jam_mulai', '<=', $validated['jam_mulai'])
-                         ->where('jam_selesai', '>=', $validated['jam_selesai']);
-                  });
+                  ->orWhere(fn($q2) => $q2->where('jam_mulai', '<=', $validated['jam_mulai'])
+                                          ->where('jam_selesai', '>=', $validated['jam_selesai']));
             })->exists();
 
         if ($duplikat) {
@@ -88,44 +86,50 @@ class ReservasiController extends Controller
             ]);
         }
 
-        // Cek bentrok dengan reservasi lain yang sudah disetujui
-        $bentrok = TrxDetailReservasi::where('id_ruangan', $validated['id_ruangan'])
-            ->where('tanggal_pakai', $validated['tanggal_pakai'])
-            ->whereHas('reservasi', function ($q) {
-                $q->whereIn('status', ['disetujui', 'sedang_dipakai']);
-            })
-            ->where(function ($q) use ($validated) {
-                $q->whereBetween('jam_mulai', [$validated['jam_mulai'], $validated['jam_selesai']])
-                  ->orWhereBetween('jam_selesai', [$validated['jam_mulai'], $validated['jam_selesai']])
-                  ->orWhere(function ($q2) use ($validated) {
-                      $q2->where('jam_mulai', '<=', $validated['jam_mulai'])
-                         ->where('jam_selesai', '>=', $validated['jam_selesai']);
-                  });
-            })->exists();
+        // Cek bentrok + simpan di dalam satu transaksi dengan lock untuk cegah race condition
+        $bentrokMessage = null;
+        try {
+            DB::transaction(function () use ($validated, &$reservasi, &$bentrokMessage) {
+                $bentrok = TrxDetailReservasi::where('id_ruangan', $validated['id_ruangan'])
+                    ->where('tanggal_pakai', $validated['tanggal_pakai'])
+                    ->whereHas('reservasi', fn($q) => $q->whereIn('status', ['disetujui', 'sedang_dipakai']))
+                    ->where(function ($q) use ($validated) {
+                        $q->whereBetween('jam_mulai', [$validated['jam_mulai'], $validated['jam_selesai']])
+                          ->orWhereBetween('jam_selesai', [$validated['jam_mulai'], $validated['jam_selesai']])
+                          ->orWhere(fn($q2) => $q2->where('jam_mulai', '<=', $validated['jam_mulai'])
+                                                   ->where('jam_selesai', '>=', $validated['jam_selesai']));
+                    })
+                    ->lockForUpdate()
+                    ->exists();
 
-        if ($bentrok) {
-            return back()->withInput()->withErrors([
-                'jam_mulai' => 'Laboratorium sudah dibooking pada waktu tersebut. Silakan pilih waktu lain.',
-            ]);
+                if ($bentrok) {
+                    $bentrokMessage = 'Laboratorium sudah dibooking pada waktu tersebut. Silakan pilih waktu lain.';
+                    return;
+                }
+
+                $reservasi = TrxReservasi::create([
+                    'id_user'           => Auth::id(),
+                    'kode_checkin'      => 'CHK-' . strtoupper(Str::random(6)),
+                    'tanggal_pengajuan' => now()->toDateString(),
+                    'keperluan'         => $validated['keperluan'],
+                    'status'            => 'disetujui',
+                ]);
+
+                TrxDetailReservasi::create([
+                    'id_reservasi'  => $reservasi->id,
+                    'id_ruangan'    => $validated['id_ruangan'],
+                    'tanggal_pakai' => $validated['tanggal_pakai'],
+                    'jam_mulai'     => $validated['jam_mulai'],
+                    'jam_selesai'   => $validated['jam_selesai'],
+                ]);
+            });
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Terjadi kesalahan. Silakan coba lagi.');
         }
 
-        DB::transaction(function () use ($validated, &$reservasi) {
-            $reservasi = TrxReservasi::create([
-                'id_user'           => Auth::id(),
-                'kode_checkin'      => 'CHK-' . strtoupper(Str::random(6)),
-                'tanggal_pengajuan' => now()->toDateString(),
-                'keperluan'         => $validated['keperluan'],
-                'status'            => 'disetujui',
-            ]);
-
-            TrxDetailReservasi::create([
-                'id_reservasi'  => $reservasi->id,
-                'id_ruangan'    => $validated['id_ruangan'],
-                'tanggal_pakai' => $validated['tanggal_pakai'],
-                'jam_mulai'     => $validated['jam_mulai'],
-                'jam_selesai'   => $validated['jam_selesai'],
-            ]);
-        });
+        if ($bentrokMessage) {
+            return back()->withInput()->withErrors(['jam_mulai' => $bentrokMessage]);
+        }
 
         return redirect()->route('aslab.dashboard')
             ->with('success', 'Reservasi berhasil dibuat dan langsung disetujui.');
