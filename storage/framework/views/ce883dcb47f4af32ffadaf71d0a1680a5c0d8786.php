@@ -146,8 +146,4 @@
 </div>
 
 <?php $__env->stopSection(); ?>
-<<<<<<<< HEAD:storage/framework/views/39dff3bb2a83bf3d2e3e449e1fba1bc47d870d46.php
-<?php echo $__env->make('layouts.admin', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\RuangLab\RuangLab\resources\views/admin/history/index.blade.php ENDPATH**/ ?>
-========
 <?php echo $__env->make('layouts.admin', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\RuangLab\resources\views/admin/history/index.blade.php ENDPATH**/ ?>
->>>>>>>> eb0f212 (revisi):storage/framework/views/ce883dcb47f4af32ffadaf71d0a1680a5c0d8786.php

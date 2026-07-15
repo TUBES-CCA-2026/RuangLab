@@ -6,10 +6,8 @@ namespace App\Http\Controllers\Aslab;
 
 use App\Http\Controllers\Controller; // ← tambahkan baris ini
 use App\Models\MstLaboratorium;
-use App\Models\MstUser;
 use App\Models\TrxDetailReservasi;
 use App\Models\TrxReservasi;
-use App\Notifications\ReservasiDibuat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -135,33 +133,8 @@ class ReservasiController extends Controller
             return back()->withInput()->withErrors(['jam_mulai' => $bentrokMessage]);
         }
 
-<<<<<<< HEAD
         return redirect()->route('aslab.dashboard')
             ->with('success', 'Reservasi berhasil dibuat dan langsung disetujui.');
-=======
-            TrxDetailReservasi::create([
-                'id_reservasi'  => $reservasi->id,
-                'id_ruangan'    => $validated['id_ruangan'],
-                'tanggal_pakai' => $validated['tanggal_pakai'],
-                'jam_mulai'     => $validated['jam_mulai'],
-                'jam_selesai'   => $validated['jam_selesai'],
-            ]);
-        });
-
-        // Kirim notifikasi ke semua laboran
-        $laboran = MstUser::whereHas('role', function ($q) {
-            $q->whereRaw('LOWER(nama_role) = ?', ['laboran']);
-        })->get();
-
-        foreach ($laboran as $l) {
-            try {
-                $l->notify(new ReservasiDibuat($reservasi->load('detail.laboratorium', 'user')));
-            } catch (\Exception $e) {}
-        }
-
-        return redirect()->route('reservasi.index')
-            ->with('success', 'Pengajuan reservasi berhasil dikirim. Mohon tunggu persetujuan laboran.');
->>>>>>> eb0f212 (revisi)
     }
 
     public function show($id)

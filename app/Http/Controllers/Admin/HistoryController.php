@@ -11,25 +11,20 @@ class HistoryController extends Controller
 {
     public function index(Request $request)
     {
-<<<<<<< HEAD
-       if ($request->filled('status') && $request->status === 'deleted') {
-    $query = TrxReservasi::withTrashed()
-        ->with(['user', 'detail.laboratorium'])
-            ->whereNotNull('deleted_at');
-    } else {
-        $query = TrxReservasi::withTrashed()
-            ->with(['user', 'detail.laboratorium'])
-=======
         TrxReservasi::autoCompleteExpired();
 
-        $query = TrxReservasi::with(['user', 'detail.laboratorium'])
->>>>>>> eb0f212 (revisi)
-            ->whereIn('status', ['disetujui', 'ditolak', 'sedang_dipakai', 'hangus', 'selesai']);
+        if ($request->filled('status') && $request->status === 'deleted') {
+            $query = TrxReservasi::onlyTrashed()
+                ->with(['user', 'detail.laboratorium']);
+        } else {
+            $query = TrxReservasi::with(['user', 'detail.laboratorium'])
+                ->whereIn('status', ['disetujui', 'ditolak', 'sedang_dipakai', 'hangus', 'selesai']);
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
         }
-    }
+
         if ($request->filled('cari')) {
             $query->whereHas('user', function ($q) use ($request) {
                 $q->where('nama', 'like', '%' . $request->cari . '%');

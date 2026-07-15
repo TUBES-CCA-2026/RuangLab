@@ -110,12 +110,7 @@ class ReservasiController extends Controller
             ]);
         }
 
-<<<<<<< HEAD
-        
         DB::transaction(function () use ($validated, &$reservasi) {
-=======
-                DB::transaction(function () use ($validated, &$reservasi) {
->>>>>>> eb0f212 (revisi)
             $reservasi = TrxReservasi::create([
                 'id_user'           => Auth::id(),
                 'kode_checkin'      => 'CHK-' . strtoupper(Str::random(6)),
@@ -132,12 +127,6 @@ class ReservasiController extends Controller
                 'jam_selesai'   => $validated['jam_selesai'],
             ]);
         });
-         $laboran = MstUser::whereHas('role', function ($q) {
-            $q->whereRaw('LOWER(nama_role) = ?', ['laboran']);
-        })->get();
-       foreach ($laboran as $l) {
-    $l->notify(new ReservasiDibuat($reservasi->load('detail.laboratorium', 'user')));
-}
 
         // Kirim notifikasi ke semua laboran
         $laboran = MstUser::whereHas('role', function ($q) {
