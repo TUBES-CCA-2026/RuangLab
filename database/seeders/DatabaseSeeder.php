@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\MstDay;
 use App\Models\MstRole;
 use App\Models\MstUser;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -44,6 +45,10 @@ class DatabaseSeeder extends Seeder
             'status'   => 1,
         ]
     );
+
+    foreach (MstDay::URUTAN as $hari) {
+        MstDay::firstOrCreate(['nama_hari' => $hari]);
+    }
 }
     }
 

@@ -16,6 +16,8 @@ class ReservasiController extends Controller
 {
     public function index(Request $request)
     {
+        TrxReservasi::autoCompleteExpired();
+
         $query = TrxReservasi::where('id_user', Auth::id())
             ->with('detail.laboratorium');
 
@@ -108,8 +110,12 @@ class ReservasiController extends Controller
             ]);
         }
 
+<<<<<<< HEAD
         
         DB::transaction(function () use ($validated, &$reservasi) {
+=======
+                DB::transaction(function () use ($validated, &$reservasi) {
+>>>>>>> eb0f212 (revisi)
             $reservasi = TrxReservasi::create([
                 'id_user'           => Auth::id(),
                 'kode_checkin'      => 'CHK-' . strtoupper(Str::random(6)),
@@ -132,6 +138,17 @@ class ReservasiController extends Controller
        foreach ($laboran as $l) {
     $l->notify(new ReservasiDibuat($reservasi->load('detail.laboratorium', 'user')));
 }
+
+        // Kirim notifikasi ke semua laboran
+        $laboran = MstUser::whereHas('role', function ($q) {
+            $q->whereRaw('LOWER(nama_role) = ?', ['laboran']);
+        })->get();
+
+        foreach ($laboran as $l) {
+            try {
+                $l->notify(new ReservasiDibuat($reservasi->load('detail.laboratorium', 'user')));
+            } catch (\Exception $e) {}
+        }
 
         return redirect()->route('reservasi.index')
             ->with('success', 'Pengajuan reservasi berhasil dikirim. Mohon tunggu persetujuan laboran.');

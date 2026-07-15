@@ -11,6 +11,7 @@ class HistoryController extends Controller
 {
     public function index(Request $request)
     {
+<<<<<<< HEAD
        if ($request->filled('status') && $request->status === 'deleted') {
     $query = TrxReservasi::withTrashed()
         ->with(['user', 'detail.laboratorium'])
@@ -18,6 +19,11 @@ class HistoryController extends Controller
     } else {
         $query = TrxReservasi::withTrashed()
             ->with(['user', 'detail.laboratorium'])
+=======
+        TrxReservasi::autoCompleteExpired();
+
+        $query = TrxReservasi::with(['user', 'detail.laboratorium'])
+>>>>>>> eb0f212 (revisi)
             ->whereIn('status', ['disetujui', 'ditolak', 'sedang_dipakai', 'hangus', 'selesai']);
 
         if ($request->filled('status')) {
@@ -53,6 +59,8 @@ class HistoryController extends Controller
 
     public function export(Request $request)
     {
+        TrxReservasi::autoCompleteExpired();
+
         $query = TrxReservasi::with(['user', 'detail.laboratorium'])
             ->whereIn('status', ['disetujui', 'ditolak', 'sedang_dipakai', 'hangus', 'selesai']);
 

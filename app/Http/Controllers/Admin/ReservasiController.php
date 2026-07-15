@@ -135,6 +135,27 @@ class ReservasiController extends Controller
             ]);
         }
 
+        $bentrok = TrxDetailReservasi::where('id_ruangan', $validated['id_ruangan'])
+            ->where('tanggal_pakai', $validated['tanggal_pakai'])
+            ->where('id_reservasi', '!=', $reservasi->id)
+            ->whereHas('reservasi', function ($q) {
+                $q->whereIn('status', ['disetujui', 'sedang_dipakai']);
+            })
+            ->where(function ($q) use ($validated) {
+                $q->whereBetween('jam_mulai', [$validated['jam_mulai'], $validated['jam_selesai']])
+                  ->orWhereBetween('jam_selesai', [$validated['jam_mulai'], $validated['jam_selesai']])
+                  ->orWhere(function ($q2) use ($validated) {
+                      $q2->where('jam_mulai', '<=', $validated['jam_mulai'])
+                         ->where('jam_selesai', '>=', $validated['jam_selesai']);
+                  });
+            })->exists();
+
+        if ($bentrok) {
+            return back()->withInput()->withErrors([
+                'jam_mulai' => 'Laboratorium sudah dibooking pada waktu tersebut.',
+            ]);
+        }
+
         DB::transaction(function () use ($reservasi, $validated) {
             $reservasi->update(['keperluan' => $validated['keperluan']]);
 
@@ -166,7 +187,7 @@ class ReservasiController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status'        => ['required', 'in:disetujui,ditolak,sedang_dipakai,hangus'],
+            'status'        => ['required', 'in:disetujui,ditolak,sedang_dipakai,hangus,selesai'],
             'catatan_admin' => ['nullable', 'string'],
         ]);
 

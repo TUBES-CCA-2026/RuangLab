@@ -59,13 +59,14 @@ class AuthController extends Controller
          $request->validate([
         'nama' => ['required', 'string', 'max:255'],
         'email' => ['required', 'email:rfc,dns', 'max:255', Rule::unique('mst_users', 'email')],
-        'no_telp' => ['nullable', 'string', 'max:20'],
+        'no_telp' => ['nullable', 'digits_between:8,15'],
         'password' => ['required', 'string', 'min:8', 'confirmed'],
     ], [
         'nama.required'       => 'Nama lengkap wajib diisi.',
         'email.required'      => 'Email wajib di isi.',
         'email.email'         => 'Format email tidak valid.',
         'email.unique'        => 'Email sudah digunakan.',
+        'no_telp.digits_between' => 'Nomor telepon harus berupa angka (8-15 digit), tanpa huruf atau simbol.',
         'password.required'   => 'Kata sandi wajib diisi.',
         'password.min'        => 'Kata sandi harus minimal 8 karakter.',
         'password.confirmed'  => 'Konfirmasi kata sandi tidak cocok.',

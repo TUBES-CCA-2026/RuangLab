@@ -7,7 +7,7 @@
 
 <div class="card table-card mb-4">
     <div class="card-body p-4">
-        <form method="GET" action="<?php echo e(route('admin.history.index')); ?>" class="row g-3 align-items-end">
+        <form method="GET" action="<?php echo e(route('aslab.history.index')); ?>" class="row g-3 align-items-end">
             <div class="col-md-3">
                 <label class="form-label small fw-semibold">Cari Nama</label>
                 <input type="text" name="cari" value="<?php echo e(request('cari')); ?>" class="form-control" placeholder="Nama peminjam...">
@@ -20,7 +20,6 @@
                     <option value="ditolak"        <?php echo e(request('status')==='ditolak'        ?'selected':''); ?>>Ditolak</option>
                     <option value="sedang_dipakai" <?php echo e(request('status')==='sedang_dipakai' ?'selected':''); ?>>Sedang Dipakai</option>
                     <option value="hangus"         <?php echo e(request('status')==='hangus'         ?'selected':''); ?>>Hangus</option>
-                    <option value="deleted" <?php echo e(request('status')==='deleted' ?'selected':''); ?>>Dihapus (Soft Delete)</option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -42,7 +41,7 @@
             </div>
             <div class="col-md-1 d-flex gap-2">
                 <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i></button>
-                <a href="<?php echo e(route('admin.history.index')); ?>" class="btn btn-outline-secondary w-100"><i class="bi bi-x-lg"></i></a>
+                <a href="<?php echo e(route('aslab.history.index')); ?>" class="btn btn-outline-secondary w-100"><i class="bi bi-x-lg"></i></a>
             </div>
         </form>
     </div>
@@ -55,9 +54,6 @@
                 <i class="bi bi-clock-history me-2"></i>Riwayat Reservasi
                 <span class="badge bg-secondary ms-1"><?php echo e($reservasis->total()); ?></span>
             </h6>
-            <a href="<?php echo e(route('admin.history.export', request()->query())); ?>" class="btn btn-success btn-sm">
-                <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export Excel
-            </a>
         </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -100,34 +96,11 @@
 
                             </span>
                         </td>
-                        <td class="d-flex gap-1">
-    <a href="<?php echo e(route('admin.reservasi.show', $r->id)); ?>" 
-       class="btn btn-sm btn-outline-primary">
-        <i class="bi bi-eye"></i>
-    </a>
-
-    <?php if($r->deleted_at): ?>
-    
-    <form method="POST" action="<?php echo e(route('admin.history.restore', $r->id)); ?>">
-        <?php echo csrf_field(); ?>
-        <button type="submit" class="btn btn-sm btn-outline-success"
-                title="Kembalikan"
-                onclick="return confirm('Kembalikan reservasi ini?')">
-            <i class="bi bi-arrow-counterclockwise"></i>
-        </button>
-    </form>
-
-    
-    <form method="POST" action="<?php echo e(route('admin.history.forceDelete', $r->id)); ?>">
-        <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
-        <button type="submit" class="btn btn-sm btn-outline-danger"
-                title="Hapus Permanen"
-                onclick="return confirm('Hapus permanen? Data tidak bisa dikembalikan!')">
-            <i class="bi bi-trash3-fill"></i>
-        </button>
-    </form>
-    <?php endif; ?>
-</td>
+                        <td>
+                            <a href="<?php echo e(route('aslab.reservasi.show', $r->id)); ?>" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <tr>
@@ -146,8 +119,4 @@
 </div>
 
 <?php $__env->stopSection(); ?>
-<<<<<<<< HEAD:storage/framework/views/39dff3bb2a83bf3d2e3e449e1fba1bc47d870d46.php
-<?php echo $__env->make('layouts.admin', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\RuangLab\RuangLab\resources\views/admin/history/index.blade.php ENDPATH**/ ?>
-========
-<?php echo $__env->make('layouts.admin', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\RuangLab\resources\views/admin/history/index.blade.php ENDPATH**/ ?>
->>>>>>>> eb0f212 (revisi):storage/framework/views/ce883dcb47f4af32ffadaf71d0a1680a5c0d8786.php
+<?php echo $__env->make('layouts.aslab', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\RuangLab\resources\views/aslab/history/index.blade.php ENDPATH**/ ?>

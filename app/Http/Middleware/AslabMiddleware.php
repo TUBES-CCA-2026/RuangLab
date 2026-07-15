@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class AsLabMiddleware
+class AslabMiddleware
 {
     public function handle(Request $request, Closure $next)
     {

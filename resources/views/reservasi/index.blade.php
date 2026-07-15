@@ -15,6 +15,8 @@
             </a>
         </div>
 
+        @include('partials.jadwal-praktikum-hari-ini')
+
         @if($reservasis->isEmpty())
             <div class="text-center py-5 bg-white rounded-xl">
                 <i class="bi bi-calendar-x fs-1 text-secondary"></i>

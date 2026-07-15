@@ -64,8 +64,12 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+<<<<<<< HEAD
        'aslab' => \App\Http\Middleware\AslabMiddleware::class,
         
+=======
+        'aslab' => \App\Http\Middleware\AslabMiddleware::class,
+>>>>>>> eb0f212 (revisi)
     ];
 }
  

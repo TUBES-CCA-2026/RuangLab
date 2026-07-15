@@ -65,6 +65,8 @@
 
     {{-- ── Kolom Kiri: Kalender Lab Hari Ini ── --}}
     <div class="col-lg-7">
+        @include('partials.jadwal-praktikum-hari-ini')
+
         {{-- Status Lab Hari Ini --}}
         <div class="card table-card mb-4">
             <div class="card-body p-4">

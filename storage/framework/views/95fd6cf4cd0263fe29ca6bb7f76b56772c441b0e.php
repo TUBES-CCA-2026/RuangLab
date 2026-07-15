@@ -60,15 +60,34 @@
             object-fit: cover;
             background: linear-gradient(135deg, #dbe4ff, #c2f5ec);
         }
+        .table-card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(16,23,42,.06);
+        }
         .badge-status-pending { background-color: #ffb020; }
         .badge-status-disetujui { background-color: #15b27a; }
         .badge-status-ditolak { background-color: #e2483d; }
         .badge-status-sedang_dipakai { background-color: var(--rl-primary); }
         .badge-status-hangus { background-color: #6b7280; }
+        .badge-status-selesai { background-color: #0d6efd; }
         footer { background-color: var(--rl-dark); color: #c7cede; }
         footer a { color: #e5e9f5; text-decoration: none; }
         footer a:hover { color: var(--rl-accent); }
         .rounded-xl { border-radius: 16px; }
+
+        .rl-toast-container { z-index: 1080; }
+        .rl-toast { border-radius: 12px; color: #fff; min-width: 280px; box-shadow: 0 10px 30px rgba(16,23,42,.18); }
+        .rl-toast .btn-close { filter: invert(1) grayscale(100%) brightness(200%); opacity: .8; }
+        .rl-toast-success { background: linear-gradient(135deg, #15b27a, #0e8f61); }
+        .rl-toast-error { background: linear-gradient(135deg, #e2483d, #c53328); }
+        .rl-notif-dropdown .dropdown-toggle::after { display: none; }
+        .rl-notif-panel { width: 340px; max-width: 90vw; border: none; border-radius: 14px; box-shadow: 0 12px 32px rgba(16,23,42,.15); overflow: hidden; }
+        .rl-notif-list { max-height: 320px; overflow-y: auto; }
+        .rl-notif-item { padding: .65rem .9rem; white-space: normal; border-bottom: 1px solid #f1f2f6; }
+        .rl-notif-item:last-child { border-bottom: none; }
+        .rl-notif-unread { background-color: rgba(41,82,227,.06); }
+        .rl-notif-item:hover { background-color: #f6f7fb; }
     </style>
 
     <?php echo $__env->yieldPushContent('styles'); ?>
@@ -111,13 +130,7 @@
                     </li>
                     <?php endif; ?>
                     <li class="nav-item">
-                        <a href="<?php echo e(route('notifications.index')); ?>" class="btn btn-sm btn-outline-light position-relative">
-                            <i class="bi bi-bell"></i>
-                            <?php $unread = auth()->user()->unreadNotifications->count(); ?>
-                            <?php if($unread > 0): ?>
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:.6rem;"><?php echo e($unread); ?></span>
-                            <?php endif; ?>
-                        </a>
+                        <?php echo $__env->make('partials.notification-bell', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -147,24 +160,7 @@
     </div>
 </nav>
 
-<?php if(session('success')): ?>
-    <div class="container mt-3">
-        <div class="alert alert-success alert-dismissible fade show rounded-xl" role="alert">
-            <i class="bi bi-check-circle me-1"></i> <?php echo e(session('success')); ?>
-
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    </div>
-<?php endif; ?>
-<?php if(session('error')): ?>
-    <div class="container mt-3">
-        <div class="alert alert-danger alert-dismissible fade show rounded-xl" role="alert">
-            <i class="bi bi-x-circle me-1"></i> <?php echo e(session('error')); ?>
-
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    </div>
-<?php endif; ?>
+<?php echo $__env->make('partials.toast-flash', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 <main>
     <?php echo $__env->yieldContent('content'); ?>
@@ -202,4 +198,4 @@
 <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
-<?php /**PATH C:\xampp\htdocs\RuangLab\RuangLab\resources\views/layouts/app.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\xampp\htdocs\RuangLab\resources\views/layouts/app.blade.php ENDPATH**/ ?>

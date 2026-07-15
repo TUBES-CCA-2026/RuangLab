@@ -15,6 +15,8 @@
             </a>
         </div>
 
+        <?php echo $__env->make('partials.jadwal-praktikum-hari-ini', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
         <?php if($reservasis->isEmpty()): ?>
             <div class="text-center py-5 bg-white rounded-xl">
                 <i class="bi bi-calendar-x fs-1 text-secondary"></i>
@@ -76,4 +78,4 @@
 </section>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\RuangLab\RuangLab\resources\views/reservasi/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\RuangLab\resources\views/reservasi/index.blade.php ENDPATH**/ ?>

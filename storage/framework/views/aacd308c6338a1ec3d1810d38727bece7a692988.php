@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard') | Aslab RuangLab</title>
+    <title><?php echo $__env->yieldContent('title', 'Dashboard'); ?> | Aslab RuangLab</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -154,13 +154,13 @@
             
         }
     </style>
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 <body>
 
 <aside class="aslab-sidebar p-3" id="aslabSidebar">
     <div class="px-2 py-3 mb-1">
-        <a href="{{ route('home') }}" class="brand d-flex align-items-center gap-2 text-decoration-none mb-2">
+        <a href="<?php echo e(route('home')); ?>" class="brand d-flex align-items-center gap-2 text-decoration-none mb-2">
             <i class="bi bi-flask fs-4 text-info"></i>
             <span class="fs-5">Ruang<span>Lab</span></span>
         </a>
@@ -169,35 +169,42 @@
 
     <nav class="nav flex-column gap-1">
         <span class="nav-section">Utama</span>
-        <a href="{{ route('aslab.dashboard') }}" class="nav-link {{ request()->routeIs('aslab.dashboard') ? 'active' : '' }}">
+        <a href="<?php echo e(route('aslab.dashboard')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.dashboard') ? 'active' : ''); ?>">
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
 
-        <span class="nav-section">Reservasi</span>
-        <a href="{{ route('aslab.reservasi.create') }}" class="nav-link {{ request()->routeIs('aslab.reservasi.create') ? 'active' : '' }}">
+        <span class="nav-section">Reservasi Saya</span>
+        <a href="<?php echo e(route('aslab.reservasi.index')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.reservasi.index') ? 'active' : ''); ?>">
+            <i class="bi bi-calendar-check"></i> Riwayat Reservasi
+        </a>
+        <a href="<?php echo e(route('aslab.reservasi.create')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.reservasi.create') ? 'active' : ''); ?>">
             <i class="bi bi-plus-circle"></i> Ajukan Reservasi
         </a>
 
-        <a href="{{ route('aslab.history.index') }}" class="nav-link {{ request()->routeIs('aslab.history.*') ? 'active' : '' }}">
+        <span class="nav-section">Verifikasi</span>
+        <a href="<?php echo e(route('aslab.verifikasi.index')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.verifikasi.*') ? 'active' : ''); ?>">
+            <i class="bi bi-clipboard-check"></i> Verifikasi
+        </a>
+        <a href="<?php echo e(route('aslab.history.index')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.history.*') ? 'active' : ''); ?>">
             <i class="bi bi-clock-history"></i> Riwayat
         </a>
 
         <hr class="border-secondary opacity-25 my-2">
-        <a href="{{ route('profile.show') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+        <a href="<?php echo e(route('profile.show')); ?>" class="nav-link <?php echo e(request()->routeIs('profile.*') ? 'active' : ''); ?>">
             <i class="bi bi-person-circle"></i> Profil Saya
         </a>
-        <a href="{{ route('notifications.index') }}" class="nav-link {{ request()->routeIs('notifications.*') ? 'active' : '' }}">
+        <a href="<?php echo e(route('notifications.index')); ?>" class="nav-link <?php echo e(request()->routeIs('notifications.*') ? 'active' : ''); ?>">
             <i class="bi bi-bell"></i> Notifikasi
-            @php $unread = auth()->user()->unreadNotifications->count(); @endphp
-            @if($unread > 0)
-                <span class="badge bg-danger ms-1" style="font-size:.65rem;">{{ $unread }}</span>
-            @endif
+            <?php $unread = auth()->user()->unreadNotifications->count(); ?>
+            <?php if($unread > 0): ?>
+                <span class="badge bg-danger ms-1" style="font-size:.65rem;"><?php echo e($unread); ?></span>
+            <?php endif; ?>
         </a>
-        <a href="{{ route('home') }}" class="nav-link">
+        <a href="<?php echo e(route('home')); ?>" class="nav-link">
             <i class="bi bi-box-arrow-left"></i> Lihat Situs Publik
         </a>
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
+        <form action="<?php echo e(route('logout')); ?>" method="POST">
+            <?php echo csrf_field(); ?>
             <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent text-danger">
                 <i class="bi bi-power"></i> Keluar
             </button>
@@ -211,26 +218,27 @@
             <button class="btn btn-light d-lg-none" onclick="document.getElementById('aslabSidebar').classList.toggle('show')">
                 <i class="bi bi-list fs-5"></i>
             </button>
-            <h5 class="mb-0 fw-semibold">@yield('page-title', 'Dashboard')</h5>
+            <h5 class="mb-0 fw-semibold"><?php echo $__env->yieldContent('page-title', 'Dashboard'); ?></h5>
         </div>
         <div class="d-flex align-items-center gap-2">
             <span class="role-chip d-none d-sm-inline"><i class="bi bi-star-fill me-1" style="font-size:.6rem;"></i>Asisten Lab</span>
-            @include('partials.notification-bell')
-            <a href="{{ route('profile.show') }}" class="d-flex align-items-center gap-2 text-decoration-none text-dark">
+            <?php echo $__env->make('partials.notification-bell', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+            <a href="<?php echo e(route('profile.show')); ?>" class="d-flex align-items-center gap-2 text-decoration-none text-dark">
                 <i class="bi bi-person-circle fs-5 text-secondary"></i>
-                <span class="fw-medium">{{ auth()->user()->nama }}</span>
+                <span class="fw-medium"><?php echo e(auth()->user()->nama); ?></span>
             </a>
         </div>
     </header>
 
-    @include('partials.toast-flash')
+    <?php echo $__env->make('partials.toast-flash', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
     <div class="p-4">
-        @yield('content')
+        <?php echo $__env->yieldContent('content'); ?>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-@stack('scripts')
+<?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
+<?php /**PATH C:\xampp\htdocs\RuangLab\resources\views/layouts/aslab.blade.php ENDPATH**/ ?>

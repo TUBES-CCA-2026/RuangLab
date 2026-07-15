@@ -1,8 +1,8 @@
-@extends('layouts.app')
 
-@section('title', 'Daftar Akun')
 
-@section('content')
+<?php $__env->startSection('title', 'Daftar Akun'); ?>
+
+<?php $__env->startSection('content'); ?>
 <section class="py-5">
     <div class="container">
         <div class="row justify-content-center">
@@ -15,29 +15,29 @@
                             <p class="text-secondary small">Daftar untuk mulai mengajukan reservasi laboratorium</p>
                         </div>
 
-                        @if ($errors->any())
+                        <?php if($errors->any()): ?>
                             <div class="alert alert-danger rounded-3">
                                 <ul class="mb-0 small">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
+                                    <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <li><?php echo e($error); ?></li>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </ul>
                             </div>
-                        @endif
+                        <?php endif; ?>
 
-                        <form method="POST" action="{{ route('register') }}">
-                            @csrf
+                        <form method="POST" action="<?php echo e(route('register')); ?>">
+                            <?php echo csrf_field(); ?>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Nama Lengkap</label>
-                                <input type="text" name="nama" value="{{ old('nama') }}" class="form-control" placeholder="Nama lengkap" required autofocus>
+                                <input type="text" name="nama" value="<?php echo e(old('nama')); ?>" class="form-control" placeholder="Nama lengkap" required autofocus>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">Email</label>
-                                <input type="email" name="email" value="{{ old('email') }}" class="form-control" placeholder="nama@email.com" required>
+                                <input type="email" name="email" value="<?php echo e(old('email')); ?>" class="form-control" placeholder="nama@email.com" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">No. Telepon (opsional)</label>
-                                <input type="text" name="no_telp" value="{{ old('no_telp') }}" class="form-control" placeholder="08xxxxxxxxxx" inputmode="numeric" pattern="[0-9]*" maxlength="15" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                <input type="text" name="no_telp" value="<?php echo e(old('no_telp')); ?>" class="form-control" placeholder="08xxxxxxxxxx" inputmode="numeric" pattern="[0-9]*" maxlength="15" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                             </div>
                             <div class="row">
                                 <div class="col-6 mb-3">
@@ -53,7 +53,7 @@
                         </form>
 
                         <p class="text-center small text-secondary mt-4 mb-0">
-                            Sudah punya akun? <a href="{{ route('login') }}" class="fw-semibold text-decoration-none">Masuk di sini</a>
+                            Sudah punya akun? <a href="<?php echo e(route('login')); ?>" class="fw-semibold text-decoration-none">Masuk di sini</a>
                         </p>
                     </div>
                 </div>
@@ -61,4 +61,6 @@
         </div>
     </div>
 </section>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\RuangLab\resources\views/auth/register.blade.php ENDPATH**/ ?>

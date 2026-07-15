@@ -4,6 +4,7 @@ use App\Http\Controllers\CheckinController;
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\HistoryController as AdminHistoryController;
+use App\Http\Controllers\Admin\JadwalPraktikumController as AdminJadwalPraktikumController;
 use App\Http\Controllers\Admin\LaboratoriumController as AdminLaboratoriumController;
 use App\Http\Controllers\Admin\ReservasiController as AdminReservasiController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -69,6 +70,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('laboratorium', AdminLaboratoriumController::class)->except(['show']);
+
+    // Jadwal praktikum — laboran isi jadwal & lab yang dipakai per hari
+    Route::get('/jadwal-praktikum', [AdminJadwalPraktikumController::class, 'index'])->name('jadwal-praktikum.index');
+    Route::get('/jadwal-praktikum/buat', [AdminJadwalPraktikumController::class, 'create'])->name('jadwal-praktikum.create');
+    Route::post('/jadwal-praktikum', [AdminJadwalPraktikumController::class, 'store'])->name('jadwal-praktikum.store');
+    Route::get('/jadwal-praktikum/{id}/edit', [AdminJadwalPraktikumController::class, 'edit'])->name('jadwal-praktikum.edit');
+    Route::put('/jadwal-praktikum/{id}', [AdminJadwalPraktikumController::class, 'update'])->name('jadwal-praktikum.update');
+    Route::delete('/jadwal-praktikum/{id}', [AdminJadwalPraktikumController::class, 'destroy'])->name('jadwal-praktikum.destroy');
 
     // Reservasi laboran — CRUD lengkap
     Route::get('/reservasi', [AdminReservasiController::class, 'index'])->name('reservasi.index');

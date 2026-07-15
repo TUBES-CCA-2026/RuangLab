@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard') | Laboran RuangLab</title>
+    <title><?php echo $__env->yieldContent('title', 'Dashboard'); ?> | Laboran RuangLab</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -86,50 +86,50 @@
             color:#e2483d;
         }
     </style>
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 <body>
 
 <aside class="admin-sidebar p-3" id="adminSidebar">
-    <a href="{{ route('admin.dashboard') }}" class="brand d-flex align-items-center gap-2 text-decoration-none px-2 py-3 mb-2">
+    <a href="<?php echo e(route('admin.dashboard')); ?>" class="brand d-flex align-items-center gap-2 text-decoration-none px-2 py-3 mb-2">
         <i class="bi bi-flask fs-4 text-info"></i>
         <span class="fs-5">Ruang<span>Lab</span></span>
     </a>
     <nav class="nav flex-column gap-1">
-        <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+        <a href="<?php echo e(route('admin.dashboard')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
-        <a href="{{ route('admin.laboratorium.index') }}" class="nav-link {{ request()->routeIs('admin.laboratorium.*') ? 'active' : '' }}">
+        <a href="<?php echo e(route('admin.laboratorium.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.laboratorium.*') ? 'active' : ''); ?>">
             <i class="bi bi-building"></i> Laboratorium
         </a>
-        <a href="{{ route('admin.reservasi.index') }}" class="nav-link {{ request()->routeIs('admin.reservasi.*') ? 'active' : '' }}">
+        <a href="<?php echo e(route('admin.reservasi.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.reservasi.*') ? 'active' : ''); ?>">
             <i class="bi bi-calendar-check"></i> Reservasi
         </a>
-        <a href="{{ route('admin.jadwal-praktikum.index') }}" class="nav-link {{ request()->routeIs('admin.jadwal-praktikum.*') ? 'active' : '' }}">
+        <a href="<?php echo e(route('admin.jadwal-praktikum.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.jadwal-praktikum.*') ? 'active' : ''); ?>">
             <i class="bi bi-calendar2-week"></i> Jadwal Praktikum
         </a>
-        <a href="{{ route('admin.history.index') }}" class="nav-link {{ request()->routeIs('admin.history.*') ? 'active' : '' }}">
+        <a href="<?php echo e(route('admin.history.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.history.*') ? 'active' : ''); ?>">
     <i class="bi bi-clock-history"></i> History Reservasi
 </a>
-        <a href="{{ route('admin.user.index') }}" class="nav-link {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
+        <a href="<?php echo e(route('admin.user.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.user.*') ? 'active' : ''); ?>">
             <i class="bi bi-people"></i> Pengguna
         </a>
         <hr class="border-secondary opacity-25 my-2">
-        <a href="{{ route('profile.show') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+        <a href="<?php echo e(route('profile.show')); ?>" class="nav-link <?php echo e(request()->routeIs('profile.*') ? 'active' : ''); ?>">
             <i class="bi bi-person-circle"></i> Profil Saya
         </a>
-        <a href="{{ route('notifications.index') }}" class="nav-link {{ request()->routeIs('notifications.*') ? 'active' : '' }}">
+        <a href="<?php echo e(route('notifications.index')); ?>" class="nav-link <?php echo e(request()->routeIs('notifications.*') ? 'active' : ''); ?>">
             <i class="bi bi-bell"></i> Notifikasi
-            @php $unread = auth()->user()->unreadNotifications->count(); @endphp
-            @if($unread > 0)
-                <span class="badge bg-danger ms-1" style="font-size:.65rem;">{{ $unread }}</span>
-            @endif
+            <?php $unread = auth()->user()->unreadNotifications->count(); ?>
+            <?php if($unread > 0): ?>
+                <span class="badge bg-danger ms-1" style="font-size:.65rem;"><?php echo e($unread); ?></span>
+            <?php endif; ?>
         </a>
-        <a href="{{ route('home') }}" class="nav-link">
+        <a href="<?php echo e(route('home')); ?>" class="nav-link">
             <i class="bi bi-box-arrow-left"></i> Lihat Situs Publik
         </a>
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
+        <form action="<?php echo e(route('logout')); ?>" method="POST">
+            <?php echo csrf_field(); ?>
             <button type="submit" class="nav-link w-100 text-start border-0 bg-transparent text-danger">
                 <i class="bi bi-power"></i> Keluar
             </button>
@@ -143,25 +143,26 @@
             <button class="btn btn-light d-lg-none" onclick="document.getElementById('adminSidebar').classList.toggle('show')">
                 <i class="bi bi-list fs-5"></i>
             </button>
-            <h5 class="mb-0 fw-semibold">@yield('page-title', 'Dashboard')</h5>
+            <h5 class="mb-0 fw-semibold"><?php echo $__env->yieldContent('page-title', 'Dashboard'); ?></h5>
         </div>
         <div class="d-flex align-items-center gap-2">
-            @include('partials.notification-bell')
-            <a href="{{ route('profile.show') }}" class="d-flex align-items-center gap-2 text-decoration-none text-dark">
+            <?php echo $__env->make('partials.notification-bell', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+            <a href="<?php echo e(route('profile.show')); ?>" class="d-flex align-items-center gap-2 text-decoration-none text-dark">
                 <i class="bi bi-person-circle fs-5 text-secondary"></i>
-                <span class="fw-medium">{{ auth()->user()->nama }}</span>
+                <span class="fw-medium"><?php echo e(auth()->user()->nama); ?></span>
             </a>
         </div>
     </header>
 
-    @include('partials.toast-flash')
+    <?php echo $__env->make('partials.toast-flash', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
     <div class="p-4">
-        @yield('content')
+        <?php echo $__env->yieldContent('content'); ?>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-@stack('scripts')
+<?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
+<?php /**PATH C:\xampp\htdocs\RuangLab\resources\views/layouts/admin.blade.php ENDPATH**/ ?>

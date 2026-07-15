@@ -11,6 +11,8 @@ class HistoryController extends Controller
 {
     public function index(Request $request)
     {
+        TrxReservasi::autoCompleteExpired();
+
         $query = TrxReservasi::with(['user', 'detail.laboratorium'])
             ->whereIn('status', ['disetujui', 'ditolak', 'sedang_dipakai', 'hangus', 'selesai']);
 

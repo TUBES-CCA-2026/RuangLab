@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Aslab;
 
 use App\Notifications\ReservasiStatusChanged;
 use App\Http\Controllers\Controller;
+use App\Models\TrxDetailReservasi;
 use App\Models\TrxReservasi;
 use Illuminate\Http\Request;
 
@@ -45,6 +46,29 @@ class VerifikasiController extends Controller
 
         if ($reservasi->status !== 'pending') {
             return back()->with('error', 'Reservasi ini sudah diproses.');
+        }
+
+        $detail = $reservasi->detail()->first();
+
+        if ($detail) {
+            $bentrok = TrxDetailReservasi::where('id_ruangan', $detail->id_ruangan)
+                ->where('tanggal_pakai', $detail->tanggal_pakai)
+                ->where('id_reservasi', '!=', $reservasi->id)
+                ->whereHas('reservasi', function ($q) {
+                    $q->whereIn('status', ['disetujui', 'sedang_dipakai']);
+                })
+                ->where(function ($q) use ($detail) {
+                    $q->whereBetween('jam_mulai', [$detail->jam_mulai, $detail->jam_selesai])
+                      ->orWhereBetween('jam_selesai', [$detail->jam_mulai, $detail->jam_selesai])
+                      ->orWhere(function ($q2) use ($detail) {
+                          $q2->where('jam_mulai', '<=', $detail->jam_mulai)
+                             ->where('jam_selesai', '>=', $detail->jam_selesai);
+                      });
+                })->exists();
+
+            if ($bentrok) {
+                return back()->with('error', 'Tidak bisa menyetujui: laboratorium sudah dibooking pihak lain pada waktu yang sama. Tolak salah satu reservasi terlebih dahulu.');
+            }
         }
 
         $reservasi->update([
