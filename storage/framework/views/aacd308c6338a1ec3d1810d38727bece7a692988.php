@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $__env->yieldContent('title', 'Dashboard'); ?> | Laboran RuangLab</title>
+    <title><?php echo $__env->yieldContent('title', 'Dashboard'); ?> | Aslab RuangLab</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,15 +12,19 @@
 
     <style>
         :root {
-            --rl-primary: #2952e3;
+            --rl-primary:      #2952e3;
             --rl-primary-dark: #1d3aa8;
-            --rl-accent: #00c2a8;
-            --rl-dark: #10172a;
-            --rl-sidebar: #131b34;
-            --rl-bg: #f3f5fa;
+            --rl-accent:       #00c2a8;
+            --rl-dark:         #10172a;
+            --rl-sidebar:      #131b34;
+            --rl-bg:           #f3f5fa;
+            --rl-aslab:        #0f7a5a;   /* hijau toska khusus aslab */
+            --rl-aslab-light:  #e6f7f3;
         }
         body { font-family: 'Poppins', sans-serif; background: var(--rl-bg); }
-        .admin-sidebar {
+
+        /* ─── Sidebar ─── */
+        .aslab-sidebar {
             width: 250px;
             min-height: 100vh;
             background: var(--rl-sidebar);
@@ -28,26 +32,56 @@
             top: 0; left: 0; bottom: 0;
             z-index: 1030;
         }
-        .admin-sidebar .brand { color: #fff; font-weight: 800; }
-        .admin-sidebar .brand span { color: var(--rl-accent); }
-        .admin-sidebar .nav-link {
+        .aslab-sidebar .brand { color: #fff; font-weight: 800; }
+        .aslab-sidebar .brand span { color: var(--rl-accent); }
+        .aslab-sidebar .role-badge {
+            background: rgba(0,194,168,.15);
+            color: var(--rl-accent);
+            font-size: .72rem;
+            font-weight: 600;
+            letter-spacing: .5px;
+            border-radius: 20px;
+            padding: 2px 10px;
+        }
+        .aslab-sidebar .nav-link {
             color: #aab3cc;
             border-radius: 10px;
             padding: .65rem .9rem;
             font-size: .92rem;
             font-weight: 500;
         }
-        .admin-sidebar .nav-link.active,
-        .admin-sidebar .nav-link:hover {
+        .aslab-sidebar .nav-link.active,
+        .aslab-sidebar .nav-link:hover {
             background: rgba(255,255,255,0.08);
             color: #fff;
         }
-        .admin-sidebar .nav-link i { width: 20px; }
-        .admin-content { margin-left: 250px; min-height: 100vh; }
-        .admin-topbar {
+        .aslab-sidebar .nav-link i { width: 20px; }
+        .aslab-sidebar .nav-section {
+            font-size: .7rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #566080;
+            text-transform: uppercase;
+            padding: .4rem .9rem;
+            margin-top: .5rem;
+        }
+
+        /* ─── Content area ─── */
+        .aslab-content { margin-left: 250px; min-height: 100vh; }
+        .aslab-topbar {
             background: #fff;
             border-bottom: 1px solid #eaedf3;
         }
+        .aslab-topbar .role-chip {
+            background: var(--rl-aslab-light);
+            color: var(--rl-aslab);
+            font-size: .75rem;
+            font-weight: 600;
+            border-radius: 20px;
+            padding: 3px 12px;
+        }
+
+        /* ─── Cards ─── */
         .stat-card {
             border: none;
             border-radius: 16px;
@@ -58,12 +92,44 @@
             border-radius: 16px;
             box-shadow: 0 4px 16px rgba(16,23,42,.06);
         }
-        .badge-status-pending { background-color: #ffb020; }
-        .badge-status-disetujui { background-color: #15b27a; }
-        .badge-status-ditolak { background-color: #e2483d; }
+
+        /* ─── Status badges ─── */
+        .badge-status-pending      { background-color: #ffb020; }
+        .badge-status-disetujui    { background-color: #15b27a; }
+        .badge-status-ditolak      { background-color: #e2483d; }
         .badge-status-sedang_dipakai { background-color: var(--rl-primary); }
-        .badge-status-hangus { background-color: #6b7280; }
-        .badge-status-selesai { background-color: #0d6efd; }
+        .badge-status-hangus       { background-color: #6b7280; }
+        .badge-status-selesai      { background-color: #0d6efd; }
+
+        /* ─── Priority badge ─── */
+        .badge-prioritas {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: #fff;
+            font-size: .68rem;
+            font-weight: 700;
+            border-radius: 20px;
+            padding: 2px 8px;
+        }
+
+        /* ─── Lab calendar card ─── */
+        .lab-status-card {
+            border: none;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(16,23,42,.06);
+        }
+        .lab-status-card .lab-header {
+            border-radius: 14px 14px 0 0;
+            padding: .85rem 1rem;
+        }
+        .lab-status-card .lab-header.tersedia { background: #f0fdf4; border-left: 4px solid #15b27a; }
+        .lab-status-card .lab-header.dipakai  { background: #eff6ff; border-left: 4px solid var(--rl-primary); }
+        .jadwal-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid var(--rl-primary);
+            padding: .5rem .75rem;
+            font-size: .83rem;
+        }
 
         .rl-toast-container { z-index: 1080; }
         .rl-toast { border-radius: 12px; color: #fff; min-width: 280px; box-shadow: 0 10px 30px rgba(16,23,42,.18); }
@@ -77,52 +143,45 @@
         .rl-notif-item:last-child { border-bottom: none; }
         .rl-notif-unread { background-color: rgba(41,82,227,.06); }
         .rl-notif-item:hover { background-color: #f6f7fb; }
+
         @media (max-width: 991.98px) {
-            .admin-sidebar { left: -250px; transition: left .2s ease; }
-            .admin-sidebar.show { left: 0; }
-            .admin-content { margin-left: 0; }
+            .aslab-sidebar { left: -250px; transition: left .2s ease; }
+            .aslab-sidebar.show { left: 0; }
+            .aslab-content { margin-left: 0; }
         }
-        .bi-power{
-            color:#e2483d;
+        .bi-power { 
+            color: #e2483d;
+            
         }
     </style>
     <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 <body>
 
-<aside class="admin-sidebar p-3" id="adminSidebar">
-    <a href="<?php echo e(route('admin.dashboard')); ?>" class="brand d-flex align-items-center gap-2 text-decoration-none px-2 py-3 mb-2">
-        <i class="bi bi-flask fs-4 text-info"></i>
-        <span class="fs-5">Ruang<span>Lab</span></span>
-    </a>
+<aside class="aslab-sidebar p-3" id="aslabSidebar">
+    <div class="px-2 py-3 mb-1">
+        <a href="<?php echo e(route('home')); ?>" class="brand d-flex align-items-center gap-2 text-decoration-none mb-2">
+            <i class="bi bi-flask fs-4 text-info"></i>
+            <span class="fs-5">Ruang<span>Lab</span></span>
+        </a>
+        <span class="role-badge"><i class="bi bi-star-fill me-1" style="font-size:.6rem;"></i>Asisten Lab</span>
+    </div>
+
     <nav class="nav flex-column gap-1">
-        <a href="<?php echo e(route('admin.dashboard')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
+        <span class="nav-section">Utama</span>
+        <a href="<?php echo e(route('aslab.dashboard')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.dashboard') ? 'active' : ''); ?>">
             <i class="bi bi-speedometer2"></i> Dashboard
         </a>
-        <a href="<?php echo e(route('admin.laboratorium.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.laboratorium.*') ? 'active' : ''); ?>">
-            <i class="bi bi-building"></i> Laboratorium
+
+        <span class="nav-section">Reservasi</span>
+        <a href="<?php echo e(route('aslab.reservasi.create')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.reservasi.create') ? 'active' : ''); ?>">
+            <i class="bi bi-plus-circle"></i> Ajukan Reservasi
         </a>
-        <a href="<?php echo e(route('admin.reservasi.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.reservasi.*') ? 'active' : ''); ?>">
-            <i class="bi bi-calendar-check"></i> Reservasi
+
+        <a href="<?php echo e(route('aslab.history.index')); ?>" class="nav-link <?php echo e(request()->routeIs('aslab.history.*') ? 'active' : ''); ?>">
+            <i class="bi bi-clock-history"></i> Riwayat
         </a>
-        <a href="<?php echo e(route('admin.jadwal-praktikum.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.jadwal-praktikum.*') ? 'active' : ''); ?>">
-            <i class="bi bi-calendar2-week"></i> Jadwal Praktikum
-        </a>
-        <a href="<?php echo e(route('admin.jadwal.import')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.jadwal.*') ? 'active' : ''); ?>">
-            <i class="bi bi-file-earmark-arrow-up"></i> Import Jadwal
-        </a>
-        <a href="<?php echo e(route('admin.tahun-ajaran.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.tahun-ajaran.*') ? 'active' : ''); ?>">
-            <i class="bi bi-calendar-range"></i> Tahun Ajaran
-        </a>
-        <a href="<?php echo e(route('admin.history.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.history.*') ? 'active' : ''); ?>">
-    <i class="bi bi-clock-history"></i> History Reservasi
-</a>
-        <a href="<?php echo e(route('admin.rekap.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.rekap.*') ? 'active' : ''); ?>">
-            <i class="bi bi-graph-up"></i> Rekap
-        </a>
-        <a href="<?php echo e(route('admin.user.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.user.*') ? 'active' : ''); ?>">
-            <i class="bi bi-people"></i> Pengguna
-        </a>
+
         <hr class="border-secondary opacity-25 my-2">
         <a href="<?php echo e(route('profile.show')); ?>" class="nav-link <?php echo e(request()->routeIs('profile.*') ? 'active' : ''); ?>">
             <i class="bi bi-person-circle"></i> Profil Saya
@@ -146,15 +205,16 @@
     </nav>
 </aside>
 
-<div class="admin-content">
-    <header class="admin-topbar d-flex align-items-center justify-content-between px-4 py-3">
+<div class="aslab-content">
+    <header class="aslab-topbar d-flex align-items-center justify-content-between px-4 py-3">
         <div class="d-flex align-items-center gap-3">
-            <button class="btn btn-light d-lg-none" onclick="document.getElementById('adminSidebar').classList.toggle('show')">
+            <button class="btn btn-light d-lg-none" onclick="document.getElementById('aslabSidebar').classList.toggle('show')">
                 <i class="bi bi-list fs-5"></i>
             </button>
             <h5 class="mb-0 fw-semibold"><?php echo $__env->yieldContent('page-title', 'Dashboard'); ?></h5>
         </div>
         <div class="d-flex align-items-center gap-2">
+            <span class="role-chip d-none d-sm-inline"><i class="bi bi-star-fill me-1" style="font-size:.6rem;"></i>Asisten Lab</span>
             <?php echo $__env->make('partials.notification-bell', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
             <a href="<?php echo e(route('profile.show')); ?>" class="d-flex align-items-center gap-2 text-decoration-none text-dark">
                 <i class="bi bi-person-circle fs-5 text-secondary"></i>
@@ -174,4 +234,4 @@
 <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
-<?php /**PATH C:\xampp\htdocs\RuangLab\resources\views/layouts/admin.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\xampp\htdocs\RuangLab\resources\views/layouts/aslab.blade.php ENDPATH**/ ?>

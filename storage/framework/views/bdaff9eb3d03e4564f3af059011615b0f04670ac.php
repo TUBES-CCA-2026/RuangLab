@@ -19,6 +19,12 @@
                 <option value="<?php echo e($lab->id); ?>" <?php echo e(request('id_lab') == $lab->id ? 'selected' : ''); ?>><?php echo e($lab->nama_lab); ?></option>
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </select>
+        <select name="id_tahun_ajaran" class="form-select" onchange="this.form.submit()">
+            <option value="">Semua Tahun Ajaran</option>
+            <?php $__currentLoopData = $tahunAjarans; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ta): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <option value="<?php echo e($ta->id); ?>" <?php echo e(request('id_tahun_ajaran') == $ta->id ? 'selected' : ''); ?>><?php echo e($ta->nama); ?></option>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        </select>
     </form>
     <a href="<?php echo e(route('admin.jadwal-praktikum.create')); ?>" class="btn btn-primary">
         <i class="bi bi-plus-lg"></i> Tambah Jadwal
@@ -35,6 +41,7 @@
                     <th>Laboratorium</th>
                     <th>Mata Kuliah</th>
                     <th>Dosen</th>
+                    <th>Tahun Ajaran</th>
                     <th class="text-end">Aksi</th>
                 </tr>
             </thead>
@@ -46,6 +53,7 @@
                     <td><?php echo e($jd->laboratorium->nama_lab ?? '-'); ?></td>
                     <td><?php echo e($jd->mataKuliah->nama_matkul ?? '-'); ?></td>
                     <td><?php echo e($jd->mataKuliah->nama_dosen ?? '-'); ?></td>
+                    <td><?php echo e($jd->tahunAjaran->nama ?? '-'); ?></td>
                     <td class="text-end">
                         <a href="<?php echo e(route('admin.jadwal-praktikum.edit', $jd->id)); ?>" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-pencil"></i> Edit
@@ -61,7 +69,7 @@
                 </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <tr>
-                    <td colspan="6" class="text-center text-secondary py-4">Belum ada jadwal praktikum.</td>
+                    <td colspan="7" class="text-center text-secondary py-4">Belum ada jadwal praktikum.</td>
                 </tr>
                 <?php endif; ?>
             </tbody>

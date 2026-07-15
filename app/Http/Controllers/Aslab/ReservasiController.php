@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Aslab;
 use App\Http\Controllers\Controller; // ← tambahkan baris ini
 use App\Models\MstLaboratorium;
 use App\Models\TrxDetailReservasi;
+use App\Models\TrxJadwalKuliah;
 use App\Models\TrxReservasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -85,6 +86,12 @@ class ReservasiController extends Controller
         if ($duplikat) {
             return back()->withInput()->withErrors([
                 'jam_mulai' => 'Anda sudah memiliki reservasi untuk lab dan waktu yang sama.',
+            ]);
+        }
+
+        if (TrxJadwalKuliah::bentrokDenganReservasi($validated['id_ruangan'], $validated['tanggal_pakai'], $validated['jam_mulai'], $validated['jam_selesai'])) {
+            return back()->withInput()->withErrors([
+                'jam_mulai' => 'Laboratorium sedang dipakai untuk jadwal praktikum kuliah pada waktu tersebut.',
             ]);
         }
 
@@ -196,6 +203,12 @@ class ReservasiController extends Controller
         if ($bentrok) {
             return back()->withInput()->withErrors([
                 'jam_mulai' => 'Laboratorium sudah dibooking pada waktu tersebut.',
+            ]);
+        }
+
+        if (TrxJadwalKuliah::bentrokDenganReservasi($validated['id_ruangan'], $validated['tanggal_pakai'], $validated['jam_mulai'], $validated['jam_selesai'])) {
+            return back()->withInput()->withErrors([
+                'jam_mulai' => 'Laboratorium sedang dipakai untuk jadwal praktikum kuliah pada waktu tersebut.',
             ]);
         }
 

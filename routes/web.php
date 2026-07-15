@@ -4,9 +4,12 @@ use App\Http\Controllers\CheckinController;
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\HistoryController as AdminHistoryController;
+use App\Http\Controllers\Admin\ImportJadwalController as AdminImportJadwalController;
 use App\Http\Controllers\Admin\JadwalPraktikumController as AdminJadwalPraktikumController;
 use App\Http\Controllers\Admin\LaboratoriumController as AdminLaboratoriumController;
+use App\Http\Controllers\Admin\RekapController as AdminRekapController;
 use App\Http\Controllers\Admin\ReservasiController as AdminReservasiController;
+use App\Http\Controllers\Admin\TahunAjaranController as AdminTahunAjaranController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Aslab\DashboardController as AslabDashboardController;
 use App\Http\Controllers\Aslab\ReservasiController as AslabReservasiController;
@@ -78,6 +81,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/jadwal-praktikum/{id}/edit', [AdminJadwalPraktikumController::class, 'edit'])->name('jadwal-praktikum.edit');
     Route::put('/jadwal-praktikum/{id}', [AdminJadwalPraktikumController::class, 'update'])->name('jadwal-praktikum.update');
     Route::delete('/jadwal-praktikum/{id}', [AdminJadwalPraktikumController::class, 'destroy'])->name('jadwal-praktikum.destroy');
+
+    // Import jadwal kuliah dari Excel/CSV
+    Route::get('/jadwal/import', [AdminImportJadwalController::class, 'index'])->name('jadwal.import');
+    Route::get('/jadwal/import/template', [AdminImportJadwalController::class, 'template'])->name('jadwal.template');
+    Route::post('/jadwal/import', [AdminImportJadwalController::class, 'import'])->name('jadwal.doImport');
+
+    // Tahun ajaran — laboran kelola periode & tetapkan yang aktif
+    Route::prefix('tahun-ajaran')->name('tahun-ajaran.')->group(function () {
+        Route::get('/', [AdminTahunAjaranController::class, 'index'])->name('index');
+        Route::get('/buat', [AdminTahunAjaranController::class, 'create'])->name('create');
+        Route::post('/', [AdminTahunAjaranController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [AdminTahunAjaranController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [AdminTahunAjaranController::class, 'update'])->name('update');
+        Route::delete('/{id}', [AdminTahunAjaranController::class, 'destroy'])->name('destroy');
+        Route::post('/{id}/aktifkan', [AdminTahunAjaranController::class, 'aktifkan'])->name('aktifkan');
+    });
+
+    // Rekap tahun ajaran
+    Route::get('/rekap', [AdminRekapController::class, 'index'])->name('rekap.index');
 
     // Reservasi laboran — CRUD lengkap
     Route::get('/reservasi', [AdminReservasiController::class, 'index'])->name('reservasi.index');

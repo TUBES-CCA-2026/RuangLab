@@ -42,6 +42,17 @@
             @endforeach
         </select>
     </div>
+    <div class="col-md-4">
+        <label class="form-label small fw-semibold">Tahun Ajaran</label>
+        <select name="id_tahun_ajaran" class="form-select" required>
+            <option value="">Pilih Tahun Ajaran</option>
+            @foreach($tahunAjarans as $ta)
+                <option value="{{ $ta->id }}" {{ old('id_tahun_ajaran', $jadwal->id_tahun_ajaran ?? '') == $ta->id ? 'selected' : '' }}>
+                    {{ $ta->nama }}{{ $ta->is_aktif ? ' (Aktif)' : '' }}
+                </option>
+            @endforeach
+        </select>
+    </div>
     <div class="col-md-2">
         <label class="form-label small fw-semibold">Jam Mulai</label>
         <input type="time" name="jam_mulai" value="{{ old('jam_mulai', isset($jadwal) ? \Illuminate\Support\Str::substr($jadwal->jam_mulai,0,5) : '') }}" class="form-control" required>

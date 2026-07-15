@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MstDay;
 use App\Models\MstLaboratorium;
 use App\Models\MstMataKuliah;
+use App\Models\MstTahunAjaran;
 use App\Models\TrxJadwalKuliah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,7 @@ class JadwalPraktikumController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TrxJadwalKuliah::with(['mataKuliah', 'laboratorium', 'hari']);
+        $query = TrxJadwalKuliah::with(['mataKuliah', 'laboratorium', 'hari', 'tahunAjaran']);
 
         if ($request->filled('id_day')) {
             $query->where('id_day', $request->id_day);
@@ -22,24 +23,29 @@ class JadwalPraktikumController extends Controller
         if ($request->filled('id_lab')) {
             $query->where('id_lab', $request->id_lab);
         }
+        if ($request->filled('id_tahun_ajaran')) {
+            $query->where('id_tahun_ajaran', $request->id_tahun_ajaran);
+        }
 
         $jadwals = $query->get()->sortBy([
             fn ($j) => array_search($j->hari->nama_hari ?? '', MstDay::URUTAN),
             fn ($j) => $j->jam_mulai,
         ])->values();
 
-        $hariList = $this->hariTerurut();
-        $labs     = MstLaboratorium::orderBy('nama_lab')->get();
+        $hariList     = $this->hariTerurut();
+        $labs         = MstLaboratorium::orderBy('nama_lab')->get();
+        $tahunAjarans = MstTahunAjaran::orderByDesc('tanggal_mulai')->get();
 
-        return view('admin.jadwal-praktikum.index', compact('jadwals', 'hariList', 'labs'));
+        return view('admin.jadwal-praktikum.index', compact('jadwals', 'hariList', 'labs', 'tahunAjarans'));
     }
 
     public function create()
     {
-        $hariList = $this->hariTerurut();
-        $labs     = MstLaboratorium::where('status', true)->orderBy('nama_lab')->get();
+        $hariList     = $this->hariTerurut();
+        $labs         = MstLaboratorium::where('status', true)->orderBy('nama_lab')->get();
+        $tahunAjarans = MstTahunAjaran::orderByDesc('tanggal_mulai')->get();
 
-        return view('admin.jadwal-praktikum.create', compact('hariList', 'labs'));
+        return view('admin.jadwal-praktikum.create', compact('hariList', 'labs', 'tahunAjarans'));
     }
 
     public function store(Request $request)
@@ -63,11 +69,12 @@ class JadwalPraktikumController extends Controller
             );
 
             TrxJadwalKuliah::create([
-                'id_matkul'   => $matkul->id,
-                'id_lab'      => $validated['id_lab'],
-                'id_day'      => $validated['id_day'],
-                'jam_mulai'   => $validated['jam_mulai'],
-                'jam_selesai' => $validated['jam_selesai'],
+                'id_matkul'       => $matkul->id,
+                'id_lab'          => $validated['id_lab'],
+                'id_day'          => $validated['id_day'],
+                'id_tahun_ajaran' => $validated['id_tahun_ajaran'],
+                'jam_mulai'       => $validated['jam_mulai'],
+                'jam_selesai'     => $validated['jam_selesai'],
             ]);
         });
 
@@ -77,11 +84,12 @@ class JadwalPraktikumController extends Controller
 
     public function edit($id)
     {
-        $jadwal   = TrxJadwalKuliah::with('mataKuliah')->findOrFail($id);
-        $hariList = $this->hariTerurut();
-        $labs     = MstLaboratorium::where('status', true)->orderBy('nama_lab')->get();
+        $jadwal       = TrxJadwalKuliah::with('mataKuliah')->findOrFail($id);
+        $hariList     = $this->hariTerurut();
+        $labs         = MstLaboratorium::where('status', true)->orderBy('nama_lab')->get();
+        $tahunAjarans = MstTahunAjaran::orderByDesc('tanggal_mulai')->get();
 
-        return view('admin.jadwal-praktikum.edit', compact('jadwal', 'hariList', 'labs'));
+        return view('admin.jadwal-praktikum.edit', compact('jadwal', 'hariList', 'labs', 'tahunAjarans'));
     }
 
     public function update(Request $request, $id)
@@ -106,11 +114,12 @@ class JadwalPraktikumController extends Controller
             );
 
             $jadwal->update([
-                'id_matkul'   => $matkul->id,
-                'id_lab'      => $validated['id_lab'],
-                'id_day'      => $validated['id_day'],
-                'jam_mulai'   => $validated['jam_mulai'],
-                'jam_selesai' => $validated['jam_selesai'],
+                'id_matkul'       => $matkul->id,
+                'id_lab'          => $validated['id_lab'],
+                'id_day'          => $validated['id_day'],
+                'id_tahun_ajaran' => $validated['id_tahun_ajaran'],
+                'jam_mulai'       => $validated['jam_mulai'],
+                'jam_selesai'     => $validated['jam_selesai'],
             ]);
         });
 
@@ -133,10 +142,11 @@ class JadwalPraktikumController extends Controller
             'nama_matkul' => ['required', 'string', 'max:255'],
             'nama_dosen'  => ['required', 'string', 'max:255'],
             'sks'         => ['nullable', 'integer', 'min:1', 'max:10'],
-            'id_lab'      => ['required', 'exists:mst_laboratorium,id'],
-            'id_day'      => ['required', 'exists:mst_day,id'],
-            'jam_mulai'   => ['required'],
-            'jam_selesai' => ['required', 'after:jam_mulai'],
+            'id_lab'          => ['required', 'exists:mst_laboratorium,id'],
+            'id_day'          => ['required', 'exists:mst_day,id'],
+            'id_tahun_ajaran' => ['required', 'exists:mst_tahun_ajaran,id'],
+            'jam_mulai'       => ['required'],
+            'jam_selesai'     => ['required', 'after:jam_mulai'],
         ], [
             'jam_selesai.after' => 'Jam selesai harus setelah jam mulai.',
         ]);

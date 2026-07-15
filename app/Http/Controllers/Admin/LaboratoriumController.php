@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\MstLaboratorium;
 use App\Models\MstLaboratoriumImage;
+use App\Models\MstRole;
 use App\Models\MstUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class LaboratoriumController extends Controller
 {
@@ -26,7 +28,7 @@ class LaboratoriumController extends Controller
 
     public function create()
     {
-        $penanggungJawabs = MstUser::whereHas('role', fn($q) => $q->whereRaw('LOWER(nama_role) = ?', ['aslab']))->orderBy('nama')->get();
+        $penanggungJawabs = $this->calonPenanggungJawab();
         return view('admin.laboratorium.create', compact('penanggungJawabs'));
     }
 
@@ -34,7 +36,10 @@ class LaboratoriumController extends Controller
     {
         $validated = $request->validate([
             'nama_lab'         => ['required', 'string', 'max:255'],
-            'penanggung_jawab' => ['required', 'exists:mst_users,id'],
+            'penanggung_jawab' => [
+                'required',
+                Rule::exists('mst_users', 'id')->whereIn('id_role', $this->idRoleAslabLaboran()),
+            ],
             'kapasitas'        => ['required', 'integer', 'min:1'],
             'fasilitas'        => ['nullable', 'string'],
             'status'           => ['required', 'boolean'],
@@ -67,7 +72,7 @@ class LaboratoriumController extends Controller
     public function edit($id)
     {
         $lab = MstLaboratorium::with('images')->findOrFail($id);
-        $penanggungJawabs = MstUser::whereHas('role', fn($q) => $q->whereRaw('LOWER(nama_role) = ?', ['aslab']))->orderBy('nama')->get();
+        $penanggungJawabs = $this->calonPenanggungJawab();
         return view('admin.laboratorium.edit', compact('lab', 'penanggungJawabs'));
     }
 
@@ -77,7 +82,10 @@ class LaboratoriumController extends Controller
 
         $validated = $request->validate([
             'nama_lab'         => ['required', 'string', 'max:255'],
-            'penanggung_jawab' => ['required', 'exists:mst_users,id'],
+            'penanggung_jawab' => [
+                'required',
+                Rule::exists('mst_users', 'id')->whereIn('id_role', $this->idRoleAslabLaboran()),
+            ],
             'kapasitas'        => ['required', 'integer', 'min:1'],
             'fasilitas'        => ['nullable', 'string'],
             'status'           => ['required', 'boolean'],
@@ -138,5 +146,21 @@ class LaboratoriumController extends Controller
 
         return redirect()->route('admin.laboratorium.index')
             ->with('success', 'Laboratorium berhasil dihapus.');
+    }
+
+    /**
+     * Kandidat penanggung jawab lab: hanya user dengan role aslab atau laboran.
+     */
+    private function calonPenanggungJawab()
+    {
+        return MstUser::whereIn('id_role', $this->idRoleAslabLaboran())->orderBy('nama')->get();
+    }
+
+    private function idRoleAslabLaboran(): array
+    {
+        return MstRole::get()
+            ->filter(fn ($role) => in_array(strtolower($role->nama_role), ['aslab', 'laboran']))
+            ->pluck('id')
+            ->toArray();
     }
 }

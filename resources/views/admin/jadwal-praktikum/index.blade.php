@@ -19,6 +19,12 @@
                 <option value="{{ $lab->id }}" {{ request('id_lab') == $lab->id ? 'selected' : '' }}>{{ $lab->nama_lab }}</option>
             @endforeach
         </select>
+        <select name="id_tahun_ajaran" class="form-select" onchange="this.form.submit()">
+            <option value="">Semua Tahun Ajaran</option>
+            @foreach($tahunAjarans as $ta)
+                <option value="{{ $ta->id }}" {{ request('id_tahun_ajaran') == $ta->id ? 'selected' : '' }}>{{ $ta->nama }}</option>
+            @endforeach
+        </select>
     </form>
     <a href="{{ route('admin.jadwal-praktikum.create') }}" class="btn btn-primary">
         <i class="bi bi-plus-lg"></i> Tambah Jadwal
@@ -35,6 +41,7 @@
                     <th>Laboratorium</th>
                     <th>Mata Kuliah</th>
                     <th>Dosen</th>
+                    <th>Tahun Ajaran</th>
                     <th class="text-end">Aksi</th>
                 </tr>
             </thead>
@@ -46,6 +53,7 @@
                     <td>{{ $jd->laboratorium->nama_lab ?? '-' }}</td>
                     <td>{{ $jd->mataKuliah->nama_matkul ?? '-' }}</td>
                     <td>{{ $jd->mataKuliah->nama_dosen ?? '-' }}</td>
+                    <td>{{ $jd->tahunAjaran->nama ?? '-' }}</td>
                     <td class="text-end">
                         <a href="{{ route('admin.jadwal-praktikum.edit', $jd->id) }}" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-pencil"></i> Edit
@@ -61,7 +69,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="text-center text-secondary py-4">Belum ada jadwal praktikum.</td>
+                    <td colspan="7" class="text-center text-secondary py-4">Belum ada jadwal praktikum.</td>
                 </tr>
                 @endforelse
             </tbody>

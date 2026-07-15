@@ -108,9 +108,18 @@
         <a href="{{ route('admin.jadwal-praktikum.index') }}" class="nav-link {{ request()->routeIs('admin.jadwal-praktikum.*') ? 'active' : '' }}">
             <i class="bi bi-calendar2-week"></i> Jadwal Praktikum
         </a>
+        <a href="{{ route('admin.jadwal.import') }}" class="nav-link {{ request()->routeIs('admin.jadwal.*') ? 'active' : '' }}">
+            <i class="bi bi-file-earmark-arrow-up"></i> Import Jadwal
+        </a>
+        <a href="{{ route('admin.tahun-ajaran.index') }}" class="nav-link {{ request()->routeIs('admin.tahun-ajaran.*') ? 'active' : '' }}">
+            <i class="bi bi-calendar-range"></i> Tahun Ajaran
+        </a>
         <a href="{{ route('admin.history.index') }}" class="nav-link {{ request()->routeIs('admin.history.*') ? 'active' : '' }}">
     <i class="bi bi-clock-history"></i> History Reservasi
 </a>
+        <a href="{{ route('admin.rekap.index') }}" class="nav-link {{ request()->routeIs('admin.rekap.*') ? 'active' : '' }}">
+            <i class="bi bi-graph-up"></i> Rekap
+        </a>
         <a href="{{ route('admin.user.index') }}" class="nav-link {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
             <i class="bi bi-people"></i> Pengguna
         </a>

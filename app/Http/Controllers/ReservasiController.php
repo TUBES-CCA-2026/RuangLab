@@ -6,6 +6,7 @@ use App\Models\MstUser;
 use App\Notifications\ReservasiDibuat;
 use App\Models\MstLaboratorium;
 use App\Models\TrxDetailReservasi;
+use App\Models\TrxJadwalKuliah;
 use App\Models\TrxReservasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -110,6 +111,12 @@ class ReservasiController extends Controller
             ]);
         }
 
+        if (TrxJadwalKuliah::bentrokDenganReservasi($validated['id_ruangan'], $validated['tanggal_pakai'], $validated['jam_mulai'], $validated['jam_selesai'])) {
+            return back()->withInput()->withErrors([
+                'jam_mulai' => 'Laboratorium sedang dipakai untuk jadwal praktikum kuliah pada waktu tersebut.',
+            ]);
+        }
+
         DB::transaction(function () use ($validated, &$reservasi) {
             $reservasi = TrxReservasi::create([
                 'id_user'           => Auth::id(),
@@ -202,6 +209,12 @@ class ReservasiController extends Controller
         if ($bentrok) {
             return back()->withInput()->withErrors([
                 'jam_mulai' => 'Laboratorium sudah dibooking pada waktu tersebut.',
+            ]);
+        }
+
+        if (TrxJadwalKuliah::bentrokDenganReservasi($validated['id_ruangan'], $validated['tanggal_pakai'], $validated['jam_mulai'], $validated['jam_selesai'])) {
+            return back()->withInput()->withErrors([
+                'jam_mulai' => 'Laboratorium sedang dipakai untuk jadwal praktikum kuliah pada waktu tersebut.',
             ]);
         }
 
