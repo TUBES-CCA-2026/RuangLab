@@ -108,6 +108,12 @@
         <a href="<?php echo e(route('admin.jadwal-praktikum.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.jadwal-praktikum.*') ? 'active' : ''); ?>">
             <i class="bi bi-calendar2-week"></i> Jadwal Praktikum
         </a>
+        <a href="<?php echo e(route('admin.jadwal.import')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.jadwal.*') ? 'active' : ''); ?>">
+            <i class="bi bi-file-earmark-arrow-up"></i> Import Jadwal
+        </a>
+        <a href="<?php echo e(route('admin.tahun-ajaran.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.tahun-ajaran.*') ? 'active' : ''); ?>">
+            <i class="bi bi-calendar-range"></i> Tahun Ajaran
+        </a>
         <a href="<?php echo e(route('admin.history.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.history.*') ? 'active' : ''); ?>">
     <i class="bi bi-clock-history"></i> History Reservasi
 </a>

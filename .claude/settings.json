@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where php *)",
+      "Bash(composer update *)",
+      "Bash(php artisan *)"
+    ]
+  }
+}

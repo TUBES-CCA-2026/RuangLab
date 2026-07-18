@@ -225,6 +225,12 @@ public function edit($id)
             ]);
         }
 
+        if (TrxJadwalKuliah::bentrokDenganReservasi($validated['id_ruangan'], $validated['tanggal_pakai'], $validated['jam_mulai'], $validated['jam_selesai'])) {
+            return back()->withInput()->withErrors([
+                'jam_mulai' => 'Laboratorium sedang dipakai untuk jadwal praktikum kuliah pada waktu tersebut.',
+            ]);
+        }
+
         DB::transaction(function () use ($reservasi, $validated) {
             $reservasi->update([
                 'keperluan' => $validated['keperluan'],

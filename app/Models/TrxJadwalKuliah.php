@@ -16,7 +16,7 @@ class TrxJadwalKuliah extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    protected $fillable = ['id_matkul', 'id_lab', 'id_day', 'jam_mulai', 'jam_selesai'];
+    protected $fillable = ['id_matkul', 'id_lab', 'id_day', 'id_tahun_ajaran', 'jam_mulai', 'jam_selesai'];
 
     public function mataKuliah()
     {

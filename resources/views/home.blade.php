@@ -148,6 +148,60 @@
 </section>
 @endif
 
+<section class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="mb-4">
+            <h2 class="fw-bold mb-1">Jadwal Reservasi 7 Hari ke Depan</h2>
+            <p class="text-secondary mb-0">Lab yang sudah direservasi dalam seminggu ke depan</p>
+        </div>
+
+        <div class="card table-card">
+            <div class="card-body p-4">
+                @if($jadwalMendatang->isEmpty())
+                    <p class="text-secondary small mb-0">Tidak ada reservasi lab dalam 7 hari ke depan.</p>
+                @else
+                    @php $grouped = $jadwalMendatang->groupBy('tanggal_pakai'); @endphp
+                    <div class="d-flex flex-column gap-3">
+                        @foreach($grouped as $tanggal => $jadwals)
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <div class="rounded-circle bg-primary-custom d-flex align-items-center justify-content-center text-white fw-bold"
+                                     style="width:32px;height:32px;font-size:.75rem;flex-shrink:0;">
+                                    {{ \Carbon\Carbon::parse($tanggal)->format('d') }}
+                                </div>
+                                <span class="fw-semibold small">
+                                    {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('l, d M Y') }}
+                                    @if(\Carbon\Carbon::parse($tanggal)->isToday())
+                                        <span class="badge bg-success-subtle text-success ms-1" style="font-size:.68rem;">Hari ini</span>
+                                    @endif
+                                </span>
+                            </div>
+                            <div class="d-flex flex-column gap-2 ms-4">
+                                @foreach($jadwals as $jd)
+                                <div class="d-flex align-items-center gap-2 p-2 rounded-3 bg-light">
+                                    <div class="text-primary-custom fw-semibold text-nowrap" style="font-size:.8rem;min-width:95px;">
+                                        {{ \Illuminate\Support\Str::substr($jd->jam_mulai,0,5) }} – {{ \Illuminate\Support\Str::substr($jd->jam_selesai,0,5) }}
+                                    </div>
+                                    <div class="fw-semibold" style="font-size:.82rem;">
+                                        <i class="bi bi-building me-1 text-secondary"></i>{{ $jd->laboratorium->nama_lab ?? '-' }}
+                                    </div>
+                                    <div class="ms-auto">
+                                        <span class="badge rounded-pill badge-status-{{ $jd->reservasi->status ?? 'pending' }} text-white px-2" style="font-size:.68rem;">
+                                            {{ ucwords(str_replace('_', ' ', $jd->reservasi->status ?? '-')) }}
+                                        </span>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="py-5">
     <div class="container py-4">
         <div class="rounded-xl hero-gradient text-white p-5 text-center">
