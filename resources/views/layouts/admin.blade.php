@@ -120,9 +120,6 @@
         <a href="{{ route('admin.rekap.index') }}" class="nav-link {{ request()->routeIs('admin.rekap.*') ? 'active' : '' }}">
             <i class="bi bi-bar-chart-line"></i> Rekap
         </a>
-        <a href="{{ route('admin.tahun-ajaran.index') }}" class="nav-link {{ request()->routeIs('admin.tahun-ajaran.*') ? 'active' : '' }}">
-            <i class="bi bi-calendar-range"></i> Tahun Ajaran
-        </a>
         <a href="{{ route('admin.mata-kuliah.index') }}" class="nav-link {{ request()->routeIs('admin.mata-kuliah.*') ? 'active' : '' }}">
             <i class="bi bi-journal-bookmark"></i> Mata Kuliah
         </a>
