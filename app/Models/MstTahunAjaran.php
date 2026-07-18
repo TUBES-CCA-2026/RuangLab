@@ -24,4 +24,19 @@ class MstTahunAjaran extends Model
         'tanggal_mulai' => 'date',
         'tanggal_selesai' => 'date',
     ];
+
+    public function jadwalKuliah()
+    {
+        return $this->hasMany(TrxJadwalKuliah::class, 'id_tahun_ajaran');
+    }
+
+    public function reservasi()
+    {
+        return $this->hasMany(TrxReservasi::class, 'id_tahun_ajaran');
+    }
+
+    public static function aktif(): ?self
+    {
+        return static::where('is_aktif', true)->first();
+    }
 }
