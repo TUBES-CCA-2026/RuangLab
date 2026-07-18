@@ -27,11 +27,11 @@ class ProfileController extends Controller
 
         $request->validate([
             'nama'    => ['required', 'string', 'max:255'],
-            'no_telp' => ['nullable', 'digits_between:8,15'],
+            'no_telp' => ['nullable', 'digits_between:8,12'],
             'email'   => ['required', 'email', Rule::unique('mst_users', 'email')->ignore($user->id)],
             'password'       => ['nullable', 'string', 'min:8', 'confirmed'],
         ], [
-            'no_telp.digits_between' => 'Nomor telepon harus berupa angka (8-15 digit), tanpa huruf atau simbol.',
+            'no_telp.digits_between' => 'Nomor telepon harus berupa angka (8-12 digit), tanpa huruf atau simbol.',
         ]);
 
         $data = [

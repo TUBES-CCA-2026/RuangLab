@@ -111,6 +111,15 @@
         <a href="<?php echo e(route('admin.history.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.history.*') ? 'active' : ''); ?>">
     <i class="bi bi-clock-history"></i> History Reservasi
 </a>
+        <a href="<?php echo e(route('admin.rekap.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.rekap.*') ? 'active' : ''); ?>">
+            <i class="bi bi-bar-chart-line"></i> Rekap
+        </a>
+        <a href="<?php echo e(route('admin.tahun-ajaran.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.tahun-ajaran.*') ? 'active' : ''); ?>">
+            <i class="bi bi-calendar-range"></i> Tahun Ajaran
+        </a>
+        <a href="<?php echo e(route('admin.mata-kuliah.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.mata-kuliah.*') ? 'active' : ''); ?>">
+            <i class="bi bi-journal-bookmark"></i> Mata Kuliah
+        </a>
         <a href="<?php echo e(route('admin.user.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.user.*') ? 'active' : ''); ?>">
             <i class="bi bi-people"></i> Pengguna
         </a>
@@ -162,6 +171,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<?php echo $__env->make('partials.confirm-modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>

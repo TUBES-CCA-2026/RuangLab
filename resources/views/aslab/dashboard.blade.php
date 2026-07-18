@@ -66,6 +66,8 @@
     {{-- ── Kolom Kiri: Kalender Lab Hari Ini ── --}}
     <div class="col-lg-7">
         @include('partials.jadwal-praktikum-hari-ini')
+        @include('partials.jadwal-mingguan')
+        @include('partials.lab-kosong-mingguan', ['createRoute' => 'aslab.reservasi.create'])
 
         {{-- Status Lab Hari Ini --}}
         <div class="card table-card mb-4">

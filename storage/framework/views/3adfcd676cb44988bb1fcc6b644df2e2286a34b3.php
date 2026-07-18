@@ -45,19 +45,31 @@
                             </div>
 
                             <div class="mb-3">
+                                <label class="form-label small fw-semibold">Mata Kuliah <span class="text-secondary">(opsional)</span></label>
+                                <select name="id_matkul" class="form-select">
+                                    <option value="">-- Tanpa Mata Kuliah --</option>
+                                    <?php $__currentLoopData = $matkuls; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $matkul): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($matkul->id); ?>" <?php echo e(old('id_matkul') == $matkul->id ? 'selected' : ''); ?>>
+                                            <?php echo e($matkul->nama_matkul); ?> (<?php echo e($matkul->nama_dosen); ?>)
+                                        </option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
                                 <label class="form-label small fw-semibold">Tanggal Pemakaian</label>
-                                <input type="date" name="tanggal_pakai" value="<?php echo e(old('tanggal_pakai')); ?>" class="form-control" min="<?php echo e(date('Y-m-d')); ?>" required>
+                                <input type="date" name="tanggal_pakai" value="<?php echo e(old('tanggal_pakai', $tanggalTerpilih)); ?>" class="form-control" min="<?php echo e(date('Y-m-d')); ?>" required>
                             </div>
 
                             <div class="row">
                                 <div class="col-6 mb-3">
                                     <label class="form-label small fw-semibold">Jam Mulai</label>
-                                    <input type="time" name="jam_mulai" value="<?php echo e(old('jam_mulai')); ?>"
+                                    <input type="time" name="jam_mulai" value="<?php echo e(old('jam_mulai', $jamMulaiTerpilih)); ?>"
        class="form-control" id="jam_mulai" required>
                                 </div>
                                 <div class="col-6 mb-3">
                                     <label class="form-label small fw-semibold">Jam Selesai <span class="text-secondary">(maks. 18:10)</span></label>
-                                    <input type="time" name="jam_selesai" value="<?php echo e(old('jam_selesai')); ?>" class="form-control" max="18:10" required>
+                                    <input type="time" name="jam_selesai" value="<?php echo e(old('jam_selesai', $jamSelesaiTerpilih)); ?>" class="form-control" max="18:10" required>
                                 </div>
                             </div>
 

@@ -97,6 +97,17 @@
     </div>
 </section>
 
+<section class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">Jadwal Praktikum Tetap</h2>
+            <p class="text-secondary mb-0">Jadwal rutin mingguan seluruh laboratorium — cek dulu sebelum reservasi supaya tidak bentrok</p>
+        </div>
+        <?php echo $__env->make('partials.jadwal-mingguan', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+        <?php echo $__env->make('partials.lab-kosong-mingguan', ['createRoute' => 'reservasi.create'], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+    </div>
+</section>
+
 <?php if($labUnggulan->isNotEmpty()): ?>
 <section class="py-5 bg-white">
     <div class="container py-4">

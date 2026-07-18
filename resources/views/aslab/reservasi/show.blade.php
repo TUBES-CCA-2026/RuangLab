@@ -43,6 +43,9 @@
                     <ul class="list-unstyled small text-secondary mb-0">
                         <li class="mb-1"><i class="bi bi-calendar3 me-1"></i>{{ \Carbon\Carbon::parse($d->tanggal_pakai)->translatedFormat('l, d F Y') }}</li>
                         <li><i class="bi bi-clock me-1"></i>{{ \Illuminate\Support\Str::substr($d->jam_mulai,0,5) }} – {{ \Illuminate\Support\Str::substr($d->jam_selesai,0,5) }}</li>
+                        @if($d->mataKuliah)
+                        <li><i class="bi bi-journal-bookmark me-1"></i>{{ $d->mataKuliah->nama_matkul }}</li>
+                        @endif
                     </ul>
                 </div>
                 @endforeach
@@ -73,12 +76,14 @@
                     <a href="{{ route('aslab.reservasi.index') }}" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-arrow-left me-1"></i>Kembali
                     </a>
-                    @if($reservasi->status === 'pending')
+                   @if(in_array($reservasi->status, ['pending', 'disetujui', 'selesai']))
                     <a href="{{ route('aslab.reservasi.edit', $reservasi->id) }}" class="btn btn-outline-primary btn-sm">
                         <i class="bi bi-pencil me-1"></i> Edit
                     </a>
+                    @endif
+                    @if(in_array($reservasi->status, ['pending', 'disetujui']))
                     <form method="POST" action="{{ route('aslab.reservasi.destroy', $reservasi->id) }}"
-                          onsubmit="return confirm('Hapus reservasi ini?')">
+                          data-confirm="Hapus reservasi ini?">
                         @csrf @method('DELETE')
                         <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash me-1"></i> Hapus</button>
                     </form>

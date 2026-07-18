@@ -6,7 +6,9 @@ namespace App\Http\Controllers\Aslab;
 
 use App\Http\Controllers\Controller; // ← tambahkan baris ini
 use App\Models\MstLaboratorium;
+use App\Models\MstMataKuliah;
 use App\Models\TrxDetailReservasi;
+use App\Models\TrxJadwalKuliah;
 use App\Models\TrxReservasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,21 +34,28 @@ class ReservasiController extends Controller
 
         $reservasis = $query->latest()->paginate(10)->withQueryString();
 
-        return view('reservasi.index', compact('reservasis'));
+        return view('aslab.reservasi.index', compact('reservasis'));
     }
 
     public function create(Request $request)
     {
         $labs        = MstLaboratorium::where('status', true)->orderBy('nama_lab')->get();
+        $matkuls     = MstMataKuliah::orderBy('nama_matkul')->get();
         $labTerpilih = $request->get('lab');
+        $tanggalTerpilih   = $request->get('tanggal_pakai');
+        $jamMulaiTerpilih  = $request->get('jam_mulai');
+        $jamSelesaiTerpilih = $request->get('jam_selesai');
 
-        return view('aslab.reservasi.create', compact('labs', 'labTerpilih'));
+        return view('aslab.reservasi.create', compact(
+            'labs', 'matkuls', 'labTerpilih', 'tanggalTerpilih', 'jamMulaiTerpilih', 'jamSelesaiTerpilih'
+        ));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'id_ruangan'    => ['required', 'exists:mst_laboratorium,id'],
+            'id_matkul'     => ['nullable', 'exists:mst_mata_kuliah,id'],
             'keperluan'     => ['required', 'string', 'max:255'],
             'tanggal_pakai' => ['required', 'date', 'after_or_equal:today'],
             'jam_mulai'     => ['required'],
@@ -88,6 +97,13 @@ class ReservasiController extends Controller
             ]);
         }
 
+        // Cek bentrok dengan jadwal praktikum tetap (mingguan)
+        if (TrxJadwalKuliah::bentrokDenganReservasi($validated['id_ruangan'], $validated['tanggal_pakai'], $validated['jam_mulai'], $validated['jam_selesai'])) {
+            return back()->withInput()->withErrors([
+                'jam_mulai' => 'Laboratorium sudah terpakai jadwal praktikum tetap pada hari dan jam tersebut.',
+            ]);
+        }
+
         // Cek bentrok + simpan di dalam satu transaksi dengan lock untuk cegah race condition
         $bentrokMessage = null;
         try {
@@ -109,17 +125,18 @@ class ReservasiController extends Controller
                     return;
                 }
 
-                $reservasi = TrxReservasi::create([
-                    'id_user'           => Auth::id(),
-                    'kode_checkin'      => 'CHK-' . strtoupper(Str::random(6)),
-                    'tanggal_pengajuan' => now()->toDateString(),
-                    'keperluan'         => $validated['keperluan'],
-                    'status'            => 'disetujui',
-                ]);
-
+         $reservasi = TrxReservasi::create([
+    'id_user'           => Auth::id(),
+    'kode_checkin'      => 'CHK-' . strtoupper(Str::random(6)),
+    'tanggal_pengajuan' => now()->toDateString(),
+    'keperluan'         => $validated['keperluan'],
+    'status'            => 'disetujui',
+    'is_prioritas'      => true,   // ← tambahkan baris ini
+]);
                 TrxDetailReservasi::create([
                     'id_reservasi'  => $reservasi->id,
                     'id_ruangan'    => $validated['id_ruangan'],
+                    'id_matkul'     => $validated['id_matkul'] ?? null,
                     'tanggal_pakai' => $validated['tanggal_pakai'],
                     'jam_mulai'     => $validated['jam_mulai'],
                     'jam_selesai'   => $validated['jam_selesai'],
@@ -140,32 +157,34 @@ class ReservasiController extends Controller
     public function show($id)
     {
         $reservasi = TrxReservasi::where('id_user', Auth::id())
-            ->with('detail.laboratorium')
+            ->with('detail.laboratorium', 'detail.mataKuliah')
             ->findOrFail($id);
 
-        return view('reservasi.show', compact('reservasi'));
+        return view('aslab.reservasi.show', compact('reservasi'));
     }
 
-    public function edit($id)
-    {
-        $reservasi = TrxReservasi::where('id_user', Auth::id())
-            ->where('status', 'pending')
-            ->with('detail.laboratorium')
-            ->findOrFail($id);
+public function edit($id)
+{
+    $reservasi = TrxReservasi::where('id_user', Auth::id())
+        ->whereIn('status', ['pending', 'disetujui', 'selesai'])
+        ->with('detail.laboratorium')
+        ->findOrFail($id);
 
-        $labs = MstLaboratorium::where('status', true)->orderBy('nama_lab')->get();
+    $labs    = MstLaboratorium::where('status', true)->orderBy('nama_lab')->get();
+    $matkuls = MstMataKuliah::orderBy('nama_matkul')->get();
 
-        return view('reservasi.edit', compact('reservasi', 'labs'));
-    }
+    return view('aslab.reservasi.edit', compact('reservasi', 'labs', 'matkuls'));
+}
 
     public function update(Request $request, $id)
     {
         $reservasi = TrxReservasi::where('id_user', Auth::id())
-            ->where('status', 'pending')
+            ->whereIn('status', ['pending', 'disetujui', 'selesai'])
             ->findOrFail($id);
 
         $validated = $request->validate([
             'id_ruangan'    => ['required', 'exists:mst_laboratorium,id'],
+            'id_matkul'     => ['nullable', 'exists:mst_mata_kuliah,id'],
             'keperluan'     => ['required', 'string', 'max:255'],
             'tanggal_pakai' => ['required', 'date', 'after_or_equal:today'],
             'jam_mulai'     => ['required'],
@@ -175,6 +194,13 @@ class ReservasiController extends Controller
         if ($validated['jam_selesai'] > '18:10') {
             return back()->withInput()->withErrors([
                 'jam_selesai' => 'Reservasi hanya dapat dilakukan hingga pukul 18:10.',
+            ]);
+        }
+
+        // Cek bentrok dengan jadwal praktikum tetap (mingguan)
+        if (TrxJadwalKuliah::bentrokDenganReservasi($validated['id_ruangan'], $validated['tanggal_pakai'], $validated['jam_mulai'], $validated['jam_selesai'])) {
+            return back()->withInput()->withErrors([
+                'jam_mulai' => 'Laboratorium sudah terpakai jadwal praktikum tetap pada hari dan jam tersebut.',
             ]);
         }
 
@@ -200,12 +226,16 @@ class ReservasiController extends Controller
         }
 
         DB::transaction(function () use ($reservasi, $validated) {
-            $reservasi->update(['keperluan' => $validated['keperluan']]);
+            $reservasi->update([
+                'keperluan' => $validated['keperluan'],
+                'status'    => $reservasi->status === 'selesai' ? 'disetujui' : $reservasi->status,
+            ]);
 
             $reservasi->detail()->updateOrCreate(
                 ['id_reservasi' => $reservasi->id],
                 [
                     'id_ruangan'    => $validated['id_ruangan'],
+                    'id_matkul'     => $validated['id_matkul'] ?? null,
                     'tanggal_pakai' => $validated['tanggal_pakai'],
                     'jam_mulai'     => $validated['jam_mulai'],
                     'jam_selesai'   => $validated['jam_selesai'],
@@ -213,7 +243,7 @@ class ReservasiController extends Controller
             );
         });
 
-        return redirect()->route('reservasi.show', $reservasi->id)
+        return redirect()->route('aslab.reservasi.show', $reservasi->id)
             ->with('success', 'Reservasi berhasil diperbarui.');
     }
 

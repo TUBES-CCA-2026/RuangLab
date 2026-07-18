@@ -44,6 +44,9 @@
                         <i class="bi bi-calendar3"></i> {{ \Carbon\Carbon::parse($d->tanggal_pakai)->translatedFormat('d F Y') }}
                         &nbsp;|&nbsp;
                         <i class="bi bi-clock"></i> {{ \Illuminate\Support\Str::substr($d->jam_mulai,0,5) }} - {{ \Illuminate\Support\Str::substr($d->jam_selesai,0,5) }}
+                        @if($d->mataKuliah)
+                            &nbsp;|&nbsp;<i class="bi bi-journal-bookmark"></i> {{ $d->mataKuliah->nama_matkul }}
+                        @endif
                     </p>
                 </div>
                 @endforeach
@@ -97,7 +100,7 @@
                         <i class="bi bi-pencil me-1"></i> Edit Reservasi
                     </a>
                     <form method="POST" action="{{ route('admin.reservasi.destroy', $reservasi->id) }}"
-                          onsubmit="return confirm('Hapus reservasi ini permanen?')">
+                          data-confirm="Hapus reservasi ini permanen?">
                         @csrf @method('DELETE')
                         <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash me-1"></i> Hapus</button>
                     </form>

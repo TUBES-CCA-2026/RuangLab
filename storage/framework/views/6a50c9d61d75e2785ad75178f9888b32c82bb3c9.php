@@ -65,6 +65,8 @@
     <div class="col-lg-7">
 
         <?php echo $__env->make('partials.jadwal-praktikum-hari-ini', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+        <?php echo $__env->make('partials.jadwal-mingguan', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+        <?php echo $__env->make('partials.lab-kosong-mingguan', ['createRoute' => 'admin.reservasi.create'], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
         
         <div class="card table-card mb-4">

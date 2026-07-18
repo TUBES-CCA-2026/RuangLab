@@ -107,21 +107,19 @@
 
     @if($r->deleted_at)
     {{-- Tombol Restore --}}
-    <form method="POST" action="{{ route('admin.history.restore', $r->id) }}">
+    <form method="POST" action="{{ route('admin.history.restore', $r->id) }}"
+          data-confirm="Kembalikan reservasi ini?" data-confirm-variant="success" data-confirm-icon="bi-arrow-counterclockwise" data-confirm-label="Ya, Kembalikan">
         @csrf
-        <button type="submit" class="btn btn-sm btn-outline-success"
-                title="Kembalikan"
-                onclick="return confirm('Kembalikan reservasi ini?')">
+        <button type="submit" class="btn btn-sm btn-outline-success" title="Kembalikan">
             <i class="bi bi-arrow-counterclockwise"></i>
         </button>
     </form>
 
     {{-- Tombol Hapus Permanen --}}
-    <form method="POST" action="{{ route('admin.history.forceDelete', $r->id) }}">
+    <form method="POST" action="{{ route('admin.history.forceDelete', $r->id) }}"
+          data-confirm="Hapus permanen? Data tidak bisa dikembalikan!" data-confirm-label="Ya, Hapus Permanen">
         @csrf @method('DELETE')
-        <button type="submit" class="btn btn-sm btn-outline-danger"
-                title="Hapus Permanen"
-                onclick="return confirm('Hapus permanen? Data tidak bisa dikembalikan!')">
+        <button type="submit" class="btn btn-sm btn-outline-danger" title="Hapus Permanen">
             <i class="bi bi-trash3-fill"></i>
         </button>
     </form>

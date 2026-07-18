@@ -14,7 +14,7 @@ class TrxDetailReservasi extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    protected $fillable = ['id_reservasi', 'id_ruangan', 'tanggal_pakai', 'jam_mulai', 'jam_selesai'];
+    protected $fillable = ['id_reservasi', 'id_ruangan', 'id_matkul', 'tanggal_pakai', 'jam_mulai', 'jam_selesai'];
 
     public function reservasi()
     {
@@ -24,5 +24,10 @@ class TrxDetailReservasi extends Model
     public function laboratorium()
     {
         return $this->belongsTo(MstLaboratorium::class, 'id_ruangan');
+    }
+
+    public function mataKuliah()
+    {
+        return $this->belongsTo(MstMataKuliah::class, 'id_matkul');
     }
 }

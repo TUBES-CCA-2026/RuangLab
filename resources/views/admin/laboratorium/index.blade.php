@@ -44,7 +44,7 @@
                         <a href="{{ route('admin.laboratorium.edit', $lab->id) }}" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-pencil"></i> Edit
                         </a>
-                        <form action="{{ route('admin.laboratorium.destroy', $lab->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus laboratorium ini?');">
+                        <form action="{{ route('admin.laboratorium.destroy', $lab->id) }}" method="POST" class="d-inline" data-confirm="Yakin ingin menghapus laboratorium ini?">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-outline-danger">

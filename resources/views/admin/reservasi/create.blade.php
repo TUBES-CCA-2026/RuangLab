@@ -30,7 +30,7 @@
                         <select name="id_ruangan" class="form-select" required>
                             <option value="">-- Pilih Laboratorium --</option>
                             @foreach($labs as $lab)
-                                <option value="{{ $lab->id }}" {{ old('id_ruangan') == $lab->id ? 'selected' : '' }}>
+                                <option value="{{ $lab->id }}" {{ old('id_ruangan', $labTerpilih) == $lab->id ? 'selected' : '' }}>
                                     {{ $lab->nama_lab }} (Kapasitas {{ $lab->kapasitas }})
                                 </option>
                             @endforeach
@@ -43,18 +43,30 @@
                     </div>
 
                     <div class="mb-3">
+                        <label class="form-label small fw-semibold">Mata Kuliah <span class="text-secondary">(opsional)</span></label>
+                        <select name="id_matkul" class="form-select">
+                            <option value="">-- Tanpa Mata Kuliah --</option>
+                            @foreach($matkuls as $matkul)
+                                <option value="{{ $matkul->id }}" {{ old('id_matkul') == $matkul->id ? 'selected' : '' }}>
+                                    {{ $matkul->nama_matkul }} ({{ $matkul->nama_dosen }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label small fw-semibold">Tanggal Pemakaian</label>
-                        <input type="date" name="tanggal_pakai" value="{{ old('tanggal_pakai') }}" class="form-control" min="{{ date('Y-m-d') }}" required>
+                        <input type="date" name="tanggal_pakai" value="{{ old('tanggal_pakai', $tanggalTerpilih) }}" class="form-control" min="{{ date('Y-m-d') }}" required>
                     </div>
 
                     <div class="row">
                         <div class="col-6 mb-3">
                             <label class="form-label small fw-semibold">Jam Mulai</label>
-                            <input type="time" name="jam_mulai" value="{{ old('jam_mulai') }}" class="form-control" required>
+                            <input type="time" name="jam_mulai" value="{{ old('jam_mulai', $jamMulaiTerpilih) }}" class="form-control" required>
                         </div>
                         <div class="col-6 mb-3">
                             <label class="form-label small fw-semibold">Jam Selesai <span class="text-secondary">(maks. 18:10)</span></label>
-                            <input type="time" name="jam_selesai" value="{{ old('jam_selesai') }}" class="form-control" max="18:10" required>
+                            <input type="time" name="jam_selesai" value="{{ old('jam_selesai', $jamSelesaiTerpilih) }}" class="form-control" max="18:10" required>
                         </div>
                     </div>
 

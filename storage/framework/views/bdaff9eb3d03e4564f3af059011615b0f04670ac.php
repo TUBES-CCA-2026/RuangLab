@@ -50,7 +50,7 @@
                         <a href="<?php echo e(route('admin.jadwal-praktikum.edit', $jd->id)); ?>" class="btn btn-sm btn-outline-primary">
                             <i class="bi bi-pencil"></i> Edit
                         </a>
-                        <form action="<?php echo e(route('admin.jadwal-praktikum.destroy', $jd->id)); ?>" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus jadwal ini?');">
+                        <form action="<?php echo e(route('admin.jadwal-praktikum.destroy', $jd->id)); ?>" method="POST" class="d-inline" data-confirm="Yakin ingin menghapus jadwal ini?">
                             <?php echo csrf_field(); ?>
                             <?php echo method_field('DELETE'); ?>
                             <button type="submit" class="btn btn-sm btn-outline-danger">

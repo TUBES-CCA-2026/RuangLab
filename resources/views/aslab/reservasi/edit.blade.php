@@ -43,6 +43,18 @@
                     </div>
 
                     <div class="mb-3">
+                        <label class="form-label small fw-semibold">Mata Kuliah <span class="text-secondary">(opsional)</span></label>
+                        <select name="id_matkul" class="form-select">
+                            <option value="">-- Tanpa Mata Kuliah --</option>
+                            @foreach($matkuls as $matkul)
+                                <option value="{{ $matkul->id }}" {{ old('id_matkul', $detail?->id_matkul) == $matkul->id ? 'selected' : '' }}>
+                                    {{ $matkul->nama_matkul }} ({{ $matkul->nama_dosen }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label small fw-semibold">Tanggal Pemakaian</label>
                         <input type="date" name="tanggal_pakai" value="{{ old('tanggal_pakai', $detail?->tanggal_pakai) }}" class="form-control" min="{{ date('Y-m-d') }}" required>
                     </div>

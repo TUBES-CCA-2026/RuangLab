@@ -34,6 +34,9 @@
                             <ul class="list-unstyled small text-secondary mb-0">
                                 <li class="mb-1"><i class="bi bi-calendar3 me-1"></i> {{ \Carbon\Carbon::parse($d->tanggal_pakai)->translatedFormat('d F Y') }}</li>
                                 <li><i class="bi bi-clock me-1"></i> {{ \Illuminate\Support\Str::substr($d->jam_mulai,0,5) }} - {{ \Illuminate\Support\Str::substr($d->jam_selesai,0,5) }}</li>
+                                @if($d->mataKuliah)
+                                <li><i class="bi bi-journal-bookmark me-1"></i> {{ $d->mataKuliah->nama_matkul }}</li>
+                                @endif
                             </ul>
                         </div>
                         @endforeach
@@ -106,14 +109,14 @@
                         </div>
                         @endif
 
-                        @if($reservasi->status === 'pending')
+                        @if(in_array($reservasi->status, ['pending', 'disetujui']))
                         <hr>
                         <div class="d-flex gap-2">
                             <a href="{{ route('reservasi.edit', $reservasi->id) }}" class="btn btn-outline-primary btn-sm">
                                 <i class="bi bi-pencil me-1"></i> Edit
                             </a>
                             <form method="POST" action="{{ route('reservasi.destroy', $reservasi->id) }}"
-                                  onsubmit="return confirm('Batalkan reservasi ini?')">
+                                  data-confirm="Batalkan reservasi ini?">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-outline-danger btn-sm">
                                     <i class="bi bi-trash me-1"></i> Batalkan

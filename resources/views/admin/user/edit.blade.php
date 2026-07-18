@@ -36,7 +36,7 @@
 
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">No. Telepon</label>
-                        <input type="text" name="no_telp" value="{{ old('no_telp', $user->no_telp) }}" class="form-control" inputmode="numeric" pattern="[0-9]*" maxlength="15" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <input type="text" name="no_telp" value="{{ old('no_telp', $user->no_telp) }}" class="form-control" inputmode="numeric" pattern="[0-9]*" maxlength="12" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                     </div>
 
                     <div class="mb-3">

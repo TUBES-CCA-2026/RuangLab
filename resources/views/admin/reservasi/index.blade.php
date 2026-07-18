@@ -58,7 +58,7 @@
                     <td class="text-end">
                         <a href="{{ route('admin.reservasi.show', $r->id) }}" class="btn btn-sm btn-outline-primary me-1">Detail</a>
                         <form method="POST" action="{{ route('admin.reservasi.destroy', $r->id) }}" class="d-inline"
-                              onsubmit="return confirm('Hapus reservasi ini?')">
+                              data-confirm="Hapus reservasi ini?">
                             @csrf @method('DELETE')
                             <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                         </form>

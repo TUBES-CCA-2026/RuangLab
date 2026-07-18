@@ -71,10 +71,12 @@
                         </td>
                         <td class="text-end">
                             <a href="{{ route('aslab.reservasi.show', $r->id) }}" class="btn btn-sm btn-outline-primary me-1">Detail</a>
-                            @if($r->status === 'pending')
+                            @if(in_array($r->status, ['pending', 'disetujui', 'selesai']))
                             <a href="{{ route('aslab.reservasi.edit', $r->id) }}" class="btn btn-sm btn-outline-secondary me-1"><i class="bi bi-pencil"></i></a>
+                            @endif
+                            @if($r->status === 'pending')
                             <form method="POST" action="{{ route('aslab.reservasi.destroy', $r->id) }}" class="d-inline"
-                                  onsubmit="return confirm('Hapus reservasi ini?')">
+                                  data-confirm="Hapus reservasi ini?">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                             </form>

@@ -6,7 +6,10 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\HistoryController as AdminHistoryController;
 use App\Http\Controllers\Admin\JadwalPraktikumController as AdminJadwalPraktikumController;
 use App\Http\Controllers\Admin\LaboratoriumController as AdminLaboratoriumController;
+use App\Http\Controllers\Admin\MataKuliahController as AdminMataKuliahController;
+use App\Http\Controllers\Admin\RekapController as AdminRekapController;
 use App\Http\Controllers\Admin\ReservasiController as AdminReservasiController;
+use App\Http\Controllers\Admin\TahunAjaranController as AdminTahunAjaranController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Aslab\DashboardController as AslabDashboardController;
 use App\Http\Controllers\Aslab\ReservasiController as AslabReservasiController;
@@ -100,6 +103,17 @@ Route::get('/history/export', [AdminHistoryController::class, 'export'])->name('
 Route::post('/history/{id}/restore', [AdminHistoryController::class, 'restore'])->name('history.restore');
 Route::delete('/history/{id}/force-delete', [AdminHistoryController::class, 'forceDelete'])->name('history.forceDelete');
     Route::resource('user', AdminUserController::class)->except(['show']);
+
+    // Tahun ajaran (master data untuk filter Rekap)
+    Route::resource('tahun-ajaran', AdminTahunAjaranController::class)->except(['show']);
+
+    // Mata kuliah (master data untuk filter Rekap & form reservasi)
+    Route::resource('mata-kuliah', AdminMataKuliahController::class)->except(['show']);
+
+    // Rekap penggunaan laboratorium
+    Route::get('/rekap', [AdminRekapController::class, 'index'])->name('rekap.index');
+    Route::get('/rekap/export-pdf', [AdminRekapController::class, 'exportPdf'])->name('rekap.exportPdf');
+    Route::get('/rekap/export-excel', [AdminRekapController::class, 'exportExcel'])->name('rekap.exportExcel');
 });
 
 // Area aslab
