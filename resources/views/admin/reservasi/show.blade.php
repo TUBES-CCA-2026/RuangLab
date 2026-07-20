@@ -27,6 +27,12 @@
                     </span>
                 </div>
 
+                @if($reservasi->trashed())
+                <div class="alert alert-secondary rounded-3">
+                    <i class="bi bi-trash me-1"></i> Reservasi ini sudah dihapus. Data ditampilkan sebagai arsip — pulihkan dulu dari History kalau ingin mengubahnya.
+                </div>
+                @endif
+
                 <hr>
 
                 <h6 class="fw-semibold mb-2">Pemohon</h6>
@@ -53,7 +59,7 @@
 
                 <p class="mb-0"><span class="fw-semibold">Keperluan:</span> {{ $reservasi->keperluan }}</p>
 
-                @if($reservasi->status === 'disetujui' || $reservasi->status === 'sedang_dipakai')
+                @if(!$reservasi->trashed() && ($reservasi->status === 'disetujui' || $reservasi->status === 'sedang_dipakai'))
                 <hr>
 
                 {{-- ===== QR SECTION (LABORAN/ADMIN) ===== --}}
@@ -96,14 +102,22 @@
             <div class="card-body p-4">
                 <h6 class="fw-semibold mb-3">Aksi Cepat</h6>
                 <div class="d-flex gap-2 flex-wrap">
-                    <a href="{{ route('admin.reservasi.edit', $reservasi->id) }}" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-pencil me-1"></i> Edit Reservasi
-                    </a>
-                    <form method="POST" action="{{ route('admin.reservasi.destroy', $reservasi->id) }}"
-                          data-confirm="Hapus reservasi ini permanen?">
-                        @csrf @method('DELETE')
-                        <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash me-1"></i> Hapus</button>
-                    </form>
+                    @if($reservasi->trashed())
+                        <form method="POST" action="{{ route('admin.history.restore', $reservasi->id) }}"
+                              data-confirm="Kembalikan reservasi ini?" data-confirm-variant="success" data-confirm-icon="bi-arrow-counterclockwise" data-confirm-label="Ya, Kembalikan">
+                            @csrf
+                            <button class="btn btn-outline-success btn-sm"><i class="bi bi-arrow-counterclockwise me-1"></i> Pulihkan</button>
+                        </form>
+                    @else
+                        <a href="{{ route('admin.reservasi.edit', $reservasi->id) }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-pencil me-1"></i> Edit Reservasi
+                        </a>
+                        <form method="POST" action="{{ route('admin.reservasi.destroy', $reservasi->id) }}"
+                              data-confirm="Hapus reservasi ini permanen?">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash me-1"></i> Hapus</button>
+                        </form>
+                    @endif
                     <a href="{{ route('admin.reservasi.index') }}" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-arrow-left me-1"></i> Kembali
                     </a>
@@ -111,6 +125,7 @@
             </div>
         </div>
 
+        @if(!$reservasi->trashed())
         <div class="card table-card">
             <div class="card-body p-4">
                 <h6 class="fw-semibold mb-3">Update Status</h6>
@@ -136,10 +151,11 @@
                 </form>
             </div>
         </div>
+        @endif
     </div>
 </div>
 
-@if($reservasi->status === 'disetujui' || $reservasi->status === 'sedang_dipakai')
+@if(!$reservasi->trashed() && ($reservasi->status === 'disetujui' || $reservasi->status === 'sedang_dipakai'))
 {{-- Load qrcode.js dari CDN --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>

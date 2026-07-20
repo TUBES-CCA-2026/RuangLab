@@ -33,9 +33,23 @@ class TrxJadwalKuliah extends Model
         return $this->belongsTo(MstDay::class, 'id_day');
     }
 
+    public function tahunAjaran()
+    {
+        return $this->belongsTo(MstTahunAjaran::class, 'id_tahun_ajaran');
+    }
+
     /**
-     * Cek apakah lab punya jadwal praktikum tetap yang bentrok dengan waktu reservasi
-     * yang diajukan (hari + jam dihitung dari tanggal_pakai).
+     * Batasi query hanya ke jadwal tetap milik tahun ajaran yang sedang aktif.
+     */
+    public function scopeTahunAjaranAktif($query)
+    {
+        return $query->where('id_tahun_ajaran', MstTahunAjaran::aktif()?->id);
+    }
+
+    /**
+     * Cek apakah lab punya jadwal praktikum tetap (di tahun ajaran yang sedang aktif)
+     * yang bentrok dengan waktu reservasi yang diajukan (hari + jam dihitung dari
+     * tanggal_pakai). Jadwal tetap dari tahun ajaran lain tidak ikut memblokir.
      */
     public static function bentrokDenganReservasi(string $idLab, string $tanggalPakai, string $jamMulai, string $jamSelesai): bool
     {
@@ -44,7 +58,8 @@ class TrxJadwalKuliah extends Model
         // Dua rentang waktu bentrok hanya kalau benar-benar tumpang tindih, bukan
         // sekadar bersinggungan di satu titik (mis. jadwal 08:00-10:00 dan reservasi
         // 10:00-12:00 TIDAK bentrok karena hanya bersambung di jam 10:00).
-        return static::where('id_lab', $idLab)
+        return static::tahunAjaranAktif()
+            ->where('id_lab', $idLab)
             ->whereHas('hari', fn ($q) => $q->where('nama_hari', $namaHari))
             ->where('jam_mulai', '<', $jamSelesai)
             ->where('jam_selesai', '>', $jamMulai)

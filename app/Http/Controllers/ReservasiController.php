@@ -21,6 +21,7 @@ class ReservasiController extends Controller
         TrxReservasi::autoCompleteExpired();
 
         $query = TrxReservasi::where('id_user', Auth::id())
+            ->tahunAjaranAktif()
             ->with('detail.laboratorium');
 
         // Tab aktif = pending, disetujui, sedang_dipakai
@@ -169,8 +170,12 @@ class ReservasiController extends Controller
 
     public function show($id)
     {
-        $reservasi = TrxReservasi::where('id_user', Auth::id())
-            ->with('detail.laboratorium', 'detail.mataKuliah')
+        // withTrashed supaya notifikasi lama yang menunjuk ke reservasi yang
+        // sudah dibatalkan/dihapus tetap bisa dibuka (tidak 404), bukan hanya
+        // yang masih aktif.
+        $reservasi = TrxReservasi::withTrashed()
+            ->where('id_user', Auth::id())
+            ->with(['detail' => fn ($q) => $q->withTrashed()->with('laboratorium', 'mataKuliah')])
             ->findOrFail($id);
 
         return view('reservasi.show', compact('reservasi'));

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\HistoryReservasiExport;
 use App\Http\Controllers\Controller;
 use App\Models\MstLaboratorium;
 use App\Models\TrxReservasi;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class HistoryController extends Controller
 {
@@ -15,7 +17,10 @@ class HistoryController extends Controller
 
         if ($request->filled('status') && $request->status === 'deleted') {
             $query = TrxReservasi::onlyTrashed()
-                ->with(['user', 'detail.laboratorium']);
+                ->with([
+                    'user',
+                    'detail' => fn ($q) => $q->withTrashed()->with('laboratorium'),
+                ]);
         } else {
             $query = TrxReservasi::with(['user', 'detail.laboratorium'])
                 ->whereIn('status', ['disetujui', 'ditolak', 'sedang_dipakai', 'hangus', 'selesai']);
@@ -56,7 +61,7 @@ class HistoryController extends Controller
     {
         TrxReservasi::autoCompleteExpired();
 
-        $query = TrxReservasi::with(['user', 'detail.laboratorium'])
+        $query = TrxReservasi::with(['user', 'detail.laboratorium', 'detail.mataKuliah'])
             ->whereIn('status', ['disetujui', 'ditolak', 'sedang_dipakai', 'hangus', 'selesai']);
 
         if ($request->filled('status')) $query->where('status', $request->status);
@@ -74,44 +79,20 @@ class HistoryController extends Controller
         }
 
         $reservasis = $query->latest()->get();
-        $filename   = 'history_reservasi_' . now()->format('Ymd_His') . '.csv';
+        $filename   = 'history_reservasi_' . now()->format('Ymd_His') . '.xlsx';
 
-        $headers = [
-            'Content-Type'        => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-        ];
-
-        $callback = function () use ($reservasis) {
-            $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['No','Nama Peminjam','Laboratorium','Tanggal Pakai','Jam Mulai','Jam Selesai','Keperluan','Status','Tanggal Pengajuan','Prioritas']);
-            foreach ($reservasis as $i => $r) {
-                $d = $r->detail->first();
-                fputcsv($handle, [
-                    $i + 1,
-                    $r->user->nama ?? '-',
-                    $d->laboratorium->nama_lab ?? '-',
-                    $d ? \Carbon\Carbon::parse($d->tanggal_pakai)->format('d/m/Y') : '-',
-                    $d ? substr($d->jam_mulai, 0, 5) : '-',
-                    $d ? substr($d->jam_selesai, 0, 5) : '-',
-                    $r->keperluan,
-                    ucwords(str_replace('_', ' ', $r->status)),
-                    \Carbon\Carbon::parse($r->tanggal_pengajuan)->format('d/m/Y'),
-                    $r->is_prioritas ? 'Ya' : 'Tidak',
-                ]);
-            }
-            fclose($handle);
-        };
-        
-
-        return response()->stream($callback, 200, $headers);
+        return Excel::download(new HistoryReservasiExport($reservasis), $filename);
     }
     public function restore($id)
 {
     $reservasi = TrxReservasi::withTrashed()->findOrFail($id);
     $reservasi->restore();
+    $reservasi->detail()->onlyTrashed()->restore();
 
-    return redirect()->route('admin.history.index')
-        ->with('success', 'Reservasi berhasil dikembalikan.');
+    // back() supaya tetap di halaman History Reservasi dengan filter/tab
+    // (mis. "Dihapus (Soft Delete)") yang sedang dilihat, bukan direset ke
+    // tampilan default.
+    return back()->with('success', 'Reservasi berhasil dikembalikan.');
 }
 
 public function forceDelete($id)
@@ -120,7 +101,6 @@ public function forceDelete($id)
     $reservasi->detail()->forceDelete();
     $reservasi->forceDelete();
 
-    return redirect()->route('admin.history.index')
-        ->with('success', 'Reservasi berhasil dihapus permanen.');
+    return back()->with('success', 'Reservasi berhasil dihapus permanen.');
 }
 }

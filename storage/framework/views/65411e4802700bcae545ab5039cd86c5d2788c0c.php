@@ -4,7 +4,7 @@
     $createRouteName     = $createRoute ?? 'reservasi.create';
 
     $labsAktif   = \App\Models\MstLaboratorium::where('status', true)->orderBy('nama_lab')->get();
-    $semuaJadwal = \App\Models\TrxJadwalKuliah::with(['laboratorium', 'hari'])->get();
+    $semuaJadwal = \App\Models\TrxJadwalKuliah::with(['laboratorium', 'hari'])->tahunAjaranAktif()->get();
     $hariIniIndex = \Carbon\Carbon::today()->dayOfWeekIso - 1;
 
     // Pecah satu rentang [mulai, selesai] jadi beberapa segmen kalau sebagian
@@ -92,6 +92,9 @@
         <h6 class="fw-semibold mb-1">
             <i class="bi bi-calendar2-check me-1 text-success"></i>
             Lab Kosong (Sepekan)
+            <?php if($tahunAjaranAktifNama = \App\Models\MstTahunAjaran::aktif()?->nama): ?>
+                <span class="text-secondary fw-normal small ms-1">— <?php echo e($tahunAjaranAktifNama); ?></span>
+            <?php endif; ?>
         </h6>
         <p class="text-secondary small mb-3">
             Slot kosong di luar jadwal praktikum tetap (<?php echo e($jamBukaOperasional); ?>–<?php echo e($jamTutupOperasional); ?>). Klik salah satu jam untuk langsung reservasi di tanggal terdekat sesuai hari itu. Jam yang sudah ada reservasi aktif (sudah check-in) ditandai "Sedang Dipakai". Reservasi yang belum check-in tidak ikut terhitung di sini — cek ulang saat mengajukan.

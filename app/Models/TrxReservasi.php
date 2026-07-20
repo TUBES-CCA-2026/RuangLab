@@ -44,6 +44,14 @@ class TrxReservasi extends Model
         return $this->belongsTo(MstTahunAjaran::class, 'id_tahun_ajaran');
     }
 
+    /**
+     * Batasi query hanya ke reservasi milik tahun ajaran yang sedang aktif.
+     */
+    public function scopeTahunAjaranAktif($query)
+    {
+        return $query->where('id_tahun_ajaran', MstTahunAjaran::aktif()?->id);
+    }
+
     public function detail()
     {
         return $this->hasMany(TrxDetailReservasi::class, 'id_reservasi');

@@ -17,12 +17,13 @@ class DashboardController extends Controller
         $stats = [
             'total_lab'           => MstLaboratorium::count(),
             'lab_aktif'           => MstLaboratorium::where('status', true)->count(),
-            'reservasi_pending'   => TrxReservasi::where('status', 'pending')->count(),
-            'reservasi_disetujui' => TrxReservasi::where('status', 'disetujui')->count(),
+            'reservasi_pending'   => TrxReservasi::tahunAjaranAktif()->where('status', 'pending')->count(),
+            'reservasi_disetujui' => TrxReservasi::tahunAjaranAktif()->where('status', 'disetujui')->count(),
             'total_user'          => MstUser::count(),
         ];
 
-        $reservasiTerbaru = TrxReservasi::with(['user', 'detail.laboratorium'])
+        $reservasiTerbaru = TrxReservasi::tahunAjaranAktif()
+            ->with(['user', 'detail.laboratorium'])
             ->latest()
             ->take(8)
             ->get();
@@ -34,7 +35,7 @@ class DashboardController extends Controller
                 Carbon::today()->addDays(6)->toDateString(),
             ])
             ->whereHas('reservasi', function ($q) {
-                $q->whereIn('status', ['disetujui', 'sedang_dipakai', 'pending']);
+                $q->tahunAjaranAktif()->whereIn('status', ['disetujui', 'sedang_dipakai', 'pending']);
             })
             ->orderBy('tanggal_pakai')
             ->orderBy('jam_mulai')
@@ -45,7 +46,7 @@ class DashboardController extends Controller
             ->with(['detailReservasi' => function ($q) {
                 $q->where('tanggal_pakai', Carbon::today()->toDateString())
                   ->whereHas('reservasi', function ($q2) {
-                      $q2->whereIn('status', ['disetujui', 'sedang_dipakai']);
+                      $q2->tahunAjaranAktif()->whereIn('status', ['disetujui', 'sedang_dipakai']);
                   })
                   ->with('reservasi.user');
             }])

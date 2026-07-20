@@ -120,9 +120,6 @@
         <a href="<?php echo e(route('admin.rekap.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.rekap.*') ? 'active' : ''); ?>">
             <i class="bi bi-bar-chart-line"></i> Rekap
         </a>
-        <a href="<?php echo e(route('admin.tahun-ajaran.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.tahun-ajaran.*') ? 'active' : ''); ?>">
-            <i class="bi bi-calendar-range"></i> Tahun Ajaran
-        </a>
         <a href="<?php echo e(route('admin.mata-kuliah.index')); ?>" class="nav-link <?php echo e(request()->routeIs('admin.mata-kuliah.*') ? 'active' : ''); ?>">
             <i class="bi bi-journal-bookmark"></i> Mata Kuliah
         </a>

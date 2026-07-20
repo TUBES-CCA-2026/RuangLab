@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('title', 'Daftar Akun'); ?>
 
 <?php $__env->startSection('content'); ?>
@@ -37,7 +35,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small fw-semibold">No. Telepon (opsional)</label>
-                                <input type="text" name="no_telp" value="<?php echo e(old('no_telp')); ?>" class="form-control" placeholder="08xxxxxxxxxx" inputmode="numeric" pattern="[0-9]*" maxlength="12" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                <input type="text" name="no_telp" value="<?php echo e(old('no_telp')); ?>" class="form-control" placeholder="08xxxxxxxxxx" inputmode="numeric" pattern="[0-9]*" maxlength="13" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                             </div>
                             <div class="row">
                                 <div class="col-6 mb-3">

@@ -35,6 +35,12 @@
                     </div>
                 </div>
 
+                @if($reservasi->trashed())
+                <div class="alert alert-secondary rounded-3">
+                    <i class="bi bi-trash me-1"></i> Reservasi ini sudah dibatalkan/dihapus. Data ditampilkan sebagai arsip.
+                </div>
+                @endif
+
                 <hr>
 
                 @foreach($reservasi->detail as $d)
@@ -61,12 +67,12 @@
                 </div>
                 @endif
 
-                @if($reservasi->status === 'disetujui')
+                @if(!$reservasi->trashed() && $reservasi->status === 'disetujui')
                 <div class="alert alert-success rounded-3 mt-4">
                     <i class="bi bi-check-circle me-1"></i>
                     Reservasi disetujui! Kode check-in: <strong>{{ $reservasi->kode_checkin }}</strong>
                 </div>
-                @elseif($reservasi->status === 'sedang_dipakai')
+                @elseif(!$reservasi->trashed() && $reservasi->status === 'sedang_dipakai')
                 <div class="alert alert-info rounded-3 mt-4">
                     <i class="bi bi-door-open me-1"></i> Ruangan sedang dipakai.
                 </div>
@@ -76,12 +82,12 @@
                     <a href="{{ route('aslab.reservasi.index') }}" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-arrow-left me-1"></i>Kembali
                     </a>
-                   @if(in_array($reservasi->status, ['pending', 'disetujui', 'selesai']))
+                   @if(!$reservasi->trashed() && in_array($reservasi->status, ['pending', 'disetujui', 'selesai']))
                     <a href="{{ route('aslab.reservasi.edit', $reservasi->id) }}" class="btn btn-outline-primary btn-sm">
                         <i class="bi bi-pencil me-1"></i> Edit
                     </a>
                     @endif
-                    @if(in_array($reservasi->status, ['pending', 'disetujui']))
+                    @if(!$reservasi->trashed() && in_array($reservasi->status, ['pending', 'disetujui']))
                     <form method="POST" action="{{ route('aslab.reservasi.destroy', $reservasi->id) }}"
                           data-confirm="Hapus reservasi ini?">
                         @csrf @method('DELETE')

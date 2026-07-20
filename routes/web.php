@@ -82,6 +82,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/jadwal-praktikum/{id}/edit', [AdminJadwalPraktikumController::class, 'edit'])->name('jadwal-praktikum.edit');
     Route::put('/jadwal-praktikum/{id}', [AdminJadwalPraktikumController::class, 'update'])->name('jadwal-praktikum.update');
     Route::delete('/jadwal-praktikum/{id}', [AdminJadwalPraktikumController::class, 'destroy'])->name('jadwal-praktikum.destroy');
+    Route::post('/jadwal-praktikum/{id}/restore', [AdminJadwalPraktikumController::class, 'restore'])->name('jadwal-praktikum.restore');
+    Route::delete('/jadwal-praktikum/{id}/force-delete', [AdminJadwalPraktikumController::class, 'forceDelete'])->name('jadwal-praktikum.forceDelete');
+    Route::get('/jadwal-praktikum/export', [AdminJadwalPraktikumController::class, 'export'])->name('jadwal-praktikum.export');
 
     // Import jadwal kuliah dari Excel/CSV
     Route::get('/jadwal/import', [AdminImportJadwalController::class, 'index'])->name('jadwal.import');
@@ -138,4 +141,5 @@ Route::prefix('aslab')->name('aslab.')->middleware(['auth', 'aslab'])->group(fun
     Route::post('/verifikasi/{id}/tolak', [AslabVerifikasiController::class, 'tolak'])->name('verifikasi.tolak');
 
     Route::get('/history', [AslabHistoryController::class, 'index'])->name('history.index');
+    Route::get('/history/export', [AslabHistoryController::class, 'export'])->name('history.export');
 });

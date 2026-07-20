@@ -21,11 +21,12 @@ class RekapController extends Controller
     {
         $data = $this->hitungRekap($request);
 
-        $tahunAjarans = MstTahunAjaran::orderByDesc('tanggal_mulai')->get();
-        $labs         = MstLaboratorium::orderBy('nama_lab')->get();
-        $matkuls      = MstMataKuliah::orderBy('nama_matkul')->get();
+        $tahunAjarans        = MstTahunAjaran::orderByDesc('tanggal_mulai')->get();
+        $labs                = MstLaboratorium::orderBy('nama_lab')->get();
+        $matkuls             = MstMataKuliah::orderBy('nama_matkul')->get();
+        $tahunAjaranTerpilih = $this->resolveTahunAjaran($request)?->id;
 
-        return view('admin.rekap.index', compact('data', 'tahunAjarans', 'labs', 'matkuls'));
+        return view('admin.rekap.index', compact('data', 'tahunAjarans', 'labs', 'matkuls', 'tahunAjaranTerpilih'));
     }
 
     public function exportPdf(Request $request)
@@ -53,11 +54,27 @@ class RekapController extends Controller
     /**
      * Hitung 5 metrik rekap berdasarkan filter tahun ajaran, laboratorium, dan mata kuliah.
      */
+    /**
+     * Tentukan tahun ajaran yang sedang difilter. Kunjungan pertama (belum ada
+     * filter apapun) default ke tahun ajaran yang sedang aktif; kalau admin
+     * eksplisit memilih "Semua Periode" atau periode lain, hormati pilihan itu.
+     */
+    private function resolveTahunAjaran(Request $request): ?MstTahunAjaran
+    {
+        if ($request->filled('tahun_ajaran_id')) {
+            return MstTahunAjaran::find($request->tahun_ajaran_id);
+        }
+
+        if (!$request->hasAny(['tahun_ajaran_id', 'id_lab', 'id_matkul'])) {
+            return MstTahunAjaran::aktif();
+        }
+
+        return null;
+    }
+
     private function hitungRekap(Request $request): array
     {
-        $tahunAjaran = $request->filled('tahun_ajaran_id')
-            ? MstTahunAjaran::find($request->tahun_ajaran_id)
-            : null;
+        $tahunAjaran = $this->resolveTahunAjaran($request);
 
         $base = TrxDetailReservasi::query()
             ->when($tahunAjaran, fn($q) => $q->whereBetween('tanggal_pakai', [$tahunAjaran->tanggal_mulai, $tahunAjaran->tanggal_selesai]))
@@ -110,7 +127,7 @@ class RekapController extends Controller
 
     private function labelFilter(Request $request): array
     {
-        $tahunAjaran = $request->filled('tahun_ajaran_id') ? MstTahunAjaran::find($request->tahun_ajaran_id) : null;
+        $tahunAjaran = $this->resolveTahunAjaran($request);
         $lab         = $request->filled('id_lab') ? MstLaboratorium::find($request->id_lab) : null;
         $matkul      = $request->filled('id_matkul') ? MstMataKuliah::find($request->id_matkul) : null;
 

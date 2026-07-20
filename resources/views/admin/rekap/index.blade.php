@@ -13,7 +13,7 @@
                 <select name="tahun_ajaran_id" class="form-select">
                     <option value="">Semua Periode</option>
                     @foreach($tahunAjarans as $ta)
-                        <option value="{{ $ta->id }}" {{ request('tahun_ajaran_id') === $ta->id ? 'selected' : '' }}>
+                        <option value="{{ $ta->id }}" {{ $tahunAjaranTerpilih === $ta->id ? 'selected' : '' }}>
                             {{ $ta->nama }}{{ $ta->is_aktif ? ' (Aktif)' : '' }}
                         </option>
                     @endforeach

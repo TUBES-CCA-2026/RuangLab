@@ -54,6 +54,9 @@
                 <i class="bi bi-clock-history me-2"></i>Riwayat Reservasi
                 <span class="badge bg-secondary ms-1">{{ $reservasis->total() }}</span>
             </h6>
+            <a href="{{ route('aslab.history.export', request()->query()) }}" class="btn btn-success btn-sm">
+                <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export Excel
+            </a>
         </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">

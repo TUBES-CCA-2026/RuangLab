@@ -45,12 +45,12 @@ class UserController extends Controller
         $request->validate([
             'nama'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'email', 'max:255', Rule::unique('mst_users', 'email')],
-            'no_telp'  => ['nullable', 'digits_between:8,12'],
+            'no_telp'  => ['nullable', 'digits_between:1,13'],
             'id_role'  => ['required', 'exists:mst_roles,id'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'status'   => ['required', 'boolean'],
         ], [
-            'no_telp.digits_between' => 'Nomor telepon harus berupa angka (8-12 digit), tanpa huruf atau simbol.',
+            'no_telp.digits_between' => 'Nomor telepon harus berupa angka (1-13 digit), tanpa huruf atau simbol.',
         ]);
 
         MstUser::create([
@@ -80,12 +80,12 @@ class UserController extends Controller
         $request->validate([
             'nama'    => ['required', 'string', 'max:255'],
             'email'   => ['required', 'email', 'max:255', Rule::unique('mst_users', 'email')->ignore($user->id)],
-            'no_telp' => ['nullable', 'digits_between:8,12'],
+            'no_telp' => ['nullable', 'digits_between:1,13'],
             'id_role' => ['required', 'exists:mst_roles,id'],
             'status'  => ['required', 'boolean'],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
         ], [
-            'no_telp.digits_between' => 'Nomor telepon harus berupa angka (8-12 digit), tanpa huruf atau simbol.',
+            'no_telp.digits_between' => 'Nomor telepon harus berupa angka (1-13 digit), tanpa huruf atau simbol.',
         ]);
 
         $data = [

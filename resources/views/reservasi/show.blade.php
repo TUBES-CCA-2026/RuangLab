@@ -26,6 +26,12 @@
                             </span>
                         </div>
 
+                        @if($reservasi->trashed())
+                        <div class="alert alert-secondary rounded-3 mb-3">
+                            <i class="bi bi-trash me-1"></i> Reservasi ini sudah dibatalkan/dihapus. Data ditampilkan sebagai arsip.
+                        </div>
+                        @endif
+
                         <hr>
 
                         @foreach($reservasi->detail as $d)
@@ -45,7 +51,7 @@
 
                         <p class="mb-1"><span class="fw-semibold">Keperluan:</span> {{ $reservasi->keperluan }}</p>
 
-                        @if($reservasi->status === 'disetujui')
+                        @if(!$reservasi->trashed() && $reservasi->status === 'disetujui')
                         <div class="alert alert-success rounded-3 mt-3">
                             <i class="bi bi-check-circle"></i> Reservasi disetujui! Saat tiba di lokasi, scan QR yang ditunjukkan laboran untuk check-in.
                         </div>
@@ -109,7 +115,7 @@
                         </div>
                         @endif
 
-                        @if(in_array($reservasi->status, ['pending', 'disetujui']))
+                        @if(!$reservasi->trashed() && in_array($reservasi->status, ['pending', 'disetujui']))
                         <hr>
                         <div class="d-flex gap-2">
                             <a href="{{ route('reservasi.edit', $reservasi->id) }}" class="btn btn-outline-primary btn-sm">

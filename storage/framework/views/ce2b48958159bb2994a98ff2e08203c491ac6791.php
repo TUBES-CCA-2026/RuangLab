@@ -1,3 +1,5 @@
+
+
 <?php $__env->startSection('title', 'Rekap Laboratorium'); ?>
 <?php $__env->startSection('page-title', 'Rekap Penggunaan Laboratorium'); ?>
 
@@ -11,7 +13,7 @@
                 <select name="tahun_ajaran_id" class="form-select">
                     <option value="">Semua Periode</option>
                     <?php $__currentLoopData = $tahunAjarans; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ta): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <option value="<?php echo e($ta->id); ?>" <?php echo e(request('tahun_ajaran_id') === $ta->id ? 'selected' : ''); ?>>
+                        <option value="<?php echo e($ta->id); ?>" <?php echo e($tahunAjaranTerpilih === $ta->id ? 'selected' : ''); ?>>
                             <?php echo e($ta->nama); ?><?php echo e($ta->is_aktif ? ' (Aktif)' : ''); ?>
 
                         </option>

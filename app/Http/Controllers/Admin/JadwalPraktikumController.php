@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\JadwalPraktikumExport;
 use App\Http\Controllers\Controller;
 use App\Models\MstDay;
 use App\Models\MstLaboratorium;
@@ -10,10 +11,52 @@ use App\Models\MstTahunAjaran;
 use App\Models\TrxJadwalKuliah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class JadwalPraktikumController extends Controller
 {
     public function index(Request $request)
+    {
+        $lihatTerhapus = $request->boolean('terhapus');
+
+        $query = $lihatTerhapus
+            ? TrxJadwalKuliah::onlyTrashed()->with(['mataKuliah', 'laboratorium', 'hari', 'tahunAjaran'])
+            : TrxJadwalKuliah::with(['mataKuliah', 'laboratorium', 'hari', 'tahunAjaran']);
+
+        if ($request->filled('id_day')) {
+            $query->where('id_day', $request->id_day);
+        }
+        if ($request->filled('id_lab')) {
+            $query->where('id_lab', $request->id_lab);
+        }
+        // Sudah pernah pilih filter tahun ajaran secara eksplisit (termasuk memilih
+        // "Semua Tahun Ajaran")? Kalau belum sama sekali (kunjungan pertama), default
+        // ke tahun ajaran yang sedang aktif supaya halaman ini "bersih" per periode.
+        if ($request->filled('id_tahun_ajaran')) {
+            $tahunAjaranTerpilih = $request->id_tahun_ajaran;
+        } elseif (!$request->hasAny(['id_day', 'id_lab', 'id_tahun_ajaran'])) {
+            $tahunAjaranTerpilih = MstTahunAjaran::aktif()?->id;
+        } else {
+            $tahunAjaranTerpilih = null;
+        }
+
+        if ($tahunAjaranTerpilih) {
+            $query->where('id_tahun_ajaran', $tahunAjaranTerpilih);
+        }
+
+        $jadwals = $query->get()->sortBy([
+            fn ($j) => array_search($j->hari->nama_hari ?? '', MstDay::URUTAN),
+            fn ($j) => $j->jam_mulai,
+        ])->values();
+
+        $hariList     = $this->hariTerurut();
+        $labs         = MstLaboratorium::orderBy('nama_lab')->get();
+        $tahunAjarans = MstTahunAjaran::orderByDesc('tanggal_mulai')->get();
+
+        return view('admin.jadwal-praktikum.index', compact('jadwals', 'hariList', 'labs', 'tahunAjarans', 'tahunAjaranTerpilih', 'lihatTerhapus'));
+    }
+
+    public function export(Request $request)
     {
         $query = TrxJadwalKuliah::with(['mataKuliah', 'laboratorium', 'hari', 'tahunAjaran']);
 
@@ -32,11 +75,9 @@ class JadwalPraktikumController extends Controller
             fn ($j) => $j->jam_mulai,
         ])->values();
 
-        $hariList     = $this->hariTerurut();
-        $labs         = MstLaboratorium::orderBy('nama_lab')->get();
-        $tahunAjarans = MstTahunAjaran::orderByDesc('tanggal_mulai')->get();
+        $filename = 'jadwal-praktikum-' . now()->format('Ymd_His') . '.xlsx';
 
-        return view('admin.jadwal-praktikum.index', compact('jadwals', 'hariList', 'labs', 'tahunAjarans'));
+        return Excel::download(new JadwalPraktikumExport($jadwals), $filename);
     }
 
     public function create()
@@ -134,6 +175,23 @@ class JadwalPraktikumController extends Controller
 
         return redirect()->route('admin.jadwal-praktikum.index')
             ->with('success', 'Jadwal praktikum berhasil dihapus.');
+    }
+
+    public function restore($id)
+    {
+        $jadwal = TrxJadwalKuliah::onlyTrashed()->findOrFail($id);
+        $jadwal->restore();
+
+        // back() supaya tetap di filter hari/lab/tahun ajaran yang sedang dilihat.
+        return back()->with('success', 'Jadwal praktikum berhasil dikembalikan.');
+    }
+
+    public function forceDelete($id)
+    {
+        $jadwal = TrxJadwalKuliah::onlyTrashed()->findOrFail($id);
+        $jadwal->forceDelete();
+
+        return back()->with('success', 'Jadwal praktikum berhasil dihapus permanen.');
     }
 
     private function validasi(Request $request): array

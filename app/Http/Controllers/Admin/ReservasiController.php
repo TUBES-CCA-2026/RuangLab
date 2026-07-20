@@ -19,7 +19,7 @@ class ReservasiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TrxReservasi::with(['user', 'detail.laboratorium']);
+        $query = TrxReservasi::tahunAjaranAktif()->with(['user', 'detail.laboratorium']);
 
         if ($request->filled('cari')) {
             $query->whereHas('user', function ($q) use ($request) {
@@ -38,7 +38,12 @@ class ReservasiController extends Controller
 
     public function show($id)
     {
-        $reservasi = TrxReservasi::with(['user', 'detail.laboratorium', 'detail.mataKuliah'])->findOrFail($id);
+        // withTrashed supaya notifikasi lama yang menunjuk ke reservasi yang
+        // sudah dibatalkan/dihapus tetap bisa dibuka (tidak 404).
+        $reservasi = TrxReservasi::withTrashed()
+            ->with(['user', 'detail' => fn ($q) => $q->withTrashed()->with('laboratorium', 'mataKuliah')])
+            ->findOrFail($id);
+
         return view('admin.reservasi.show', compact('reservasi'));
     }
 

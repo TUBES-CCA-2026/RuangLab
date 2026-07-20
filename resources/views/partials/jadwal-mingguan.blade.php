@@ -1,5 +1,6 @@
 @php
     $jadwalMingguanGrouped = \App\Models\TrxJadwalKuliah::with(['mataKuliah', 'laboratorium', 'hari'])
+        ->tahunAjaranAktif()
         ->get()
         ->groupBy(fn ($j) => $j->hari->nama_hari ?? '?')
         ->sortBy(fn ($items, $hari) => array_search($hari, \App\Models\MstDay::URUTAN));
@@ -9,11 +10,14 @@
         <h6 class="fw-semibold mb-1">
             <i class="bi bi-calendar-week me-1 text-primary"></i>
             Jadwal Praktikum Tetap (Sepekan)
+            @if($tahunAjaranAktifNama = \App\Models\MstTahunAjaran::aktif()?->nama)
+                <span class="text-secondary fw-normal small ms-1">— {{ $tahunAjaranAktifNama }}</span>
+            @endif
         </h6>
-        <p class="text-secondary small mb-3">Jadwal rutin mingguan untuk seluruh laboratorium. Lab otomatis terkunci pada jam ini — reservasi baru tidak bisa dibuat bentrok dengan jadwal ini.</p>
+        <p class="text-secondary small mb-3">Jadwal rutin mingguan untuk seluruh laboratorium di tahun ajaran yang sedang aktif. Lab otomatis terkunci pada jam ini — reservasi baru tidak bisa dibuat bentrok dengan jadwal ini.</p>
 
         @if($jadwalMingguanGrouped->isEmpty())
-            <p class="text-secondary small mb-0">Belum ada jadwal praktikum tetap.</p>
+            <p class="text-secondary small mb-0">Belum ada jadwal praktikum tetap untuk tahun ajaran ini.</p>
         @else
             <div class="row g-3">
                 @foreach($jadwalMingguanGrouped as $hari => $items)

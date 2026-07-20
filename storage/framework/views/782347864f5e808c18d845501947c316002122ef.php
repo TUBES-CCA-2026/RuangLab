@@ -28,6 +28,12 @@
                     </span>
                 </div>
 
+                <?php if($reservasi->trashed()): ?>
+                <div class="alert alert-secondary rounded-3">
+                    <i class="bi bi-trash me-1"></i> Reservasi ini sudah dihapus. Data ditampilkan sebagai arsip — pulihkan dulu dari History kalau ingin mengubahnya.
+                </div>
+                <?php endif; ?>
+
                 <hr>
 
                 <h6 class="fw-semibold mb-2">Pemohon</h6>
@@ -57,7 +63,7 @@
 
                 <p class="mb-0"><span class="fw-semibold">Keperluan:</span> <?php echo e($reservasi->keperluan); ?></p>
 
-                <?php if($reservasi->status === 'disetujui' || $reservasi->status === 'sedang_dipakai'): ?>
+                <?php if(!$reservasi->trashed() && ($reservasi->status === 'disetujui' || $reservasi->status === 'sedang_dipakai')): ?>
                 <hr>
 
                 
@@ -102,14 +108,22 @@
             <div class="card-body p-4">
                 <h6 class="fw-semibold mb-3">Aksi Cepat</h6>
                 <div class="d-flex gap-2 flex-wrap">
-                    <a href="<?php echo e(route('admin.reservasi.edit', $reservasi->id)); ?>" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-pencil me-1"></i> Edit Reservasi
-                    </a>
-                    <form method="POST" action="<?php echo e(route('admin.reservasi.destroy', $reservasi->id)); ?>"
-                          data-confirm="Hapus reservasi ini permanen?">
-                        <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
-                        <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash me-1"></i> Hapus</button>
-                    </form>
+                    <?php if($reservasi->trashed()): ?>
+                        <form method="POST" action="<?php echo e(route('admin.history.restore', $reservasi->id)); ?>"
+                              data-confirm="Kembalikan reservasi ini?" data-confirm-variant="success" data-confirm-icon="bi-arrow-counterclockwise" data-confirm-label="Ya, Kembalikan">
+                            <?php echo csrf_field(); ?>
+                            <button class="btn btn-outline-success btn-sm"><i class="bi bi-arrow-counterclockwise me-1"></i> Pulihkan</button>
+                        </form>
+                    <?php else: ?>
+                        <a href="<?php echo e(route('admin.reservasi.edit', $reservasi->id)); ?>" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-pencil me-1"></i> Edit Reservasi
+                        </a>
+                        <form method="POST" action="<?php echo e(route('admin.reservasi.destroy', $reservasi->id)); ?>"
+                              data-confirm="Hapus reservasi ini permanen?">
+                            <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
+                            <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash me-1"></i> Hapus</button>
+                        </form>
+                    <?php endif; ?>
                     <a href="<?php echo e(route('admin.reservasi.index')); ?>" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-arrow-left me-1"></i> Kembali
                     </a>
@@ -117,6 +131,7 @@
             </div>
         </div>
 
+        <?php if(!$reservasi->trashed()): ?>
         <div class="card table-card">
             <div class="card-body p-4">
                 <h6 class="fw-semibold mb-3">Update Status</h6>
@@ -142,10 +157,11 @@
                 </form>
             </div>
         </div>
+        <?php endif; ?>
     </div>
 </div>
 
-<?php if($reservasi->status === 'disetujui' || $reservasi->status === 'sedang_dipakai'): ?>
+<?php if(!$reservasi->trashed() && ($reservasi->status === 'disetujui' || $reservasi->status === 'sedang_dipakai')): ?>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
