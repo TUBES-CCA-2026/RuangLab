@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'RuangLab') | Sistem Reservasi Laboratorium</title>
+    <title><?php echo $__env->yieldContent('title', 'RuangLab'); ?> | Sistem Reservasi Laboratorium</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -90,79 +90,80 @@
         .rl-notif-item:hover { background-color: #f6f7fb; }
     </style>
 
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary-custom sticky-top shadow-sm">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('home') }}">Ruang<span>Lab</span></a>
+        <a class="navbar-brand" href="<?php echo e(route('home')); ?>">Ruang<span>Lab</span></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('home') ? 'active fw-semibold' : '' }}" href="{{ route('home') }}">Beranda</a>
+                    <a class="nav-link <?php echo e(request()->routeIs('home') ? 'active fw-semibold' : ''); ?>" href="<?php echo e(route('home')); ?>">Beranda</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('laboratorium.*') ? 'active fw-semibold' : '' }}" href="{{ route('laboratorium.index') }}">Laboratorium</a>
+                    <a class="nav-link <?php echo e(request()->routeIs('laboratorium.*') ? 'active fw-semibold' : ''); ?>" href="<?php echo e(route('laboratorium.index')); ?>">Laboratorium</a>
                 </li>
-                @auth
+                <?php if(auth()->guard()->check()): ?>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('reservasi.*') ? 'active fw-semibold' : '' }}" href="{{ route('reservasi.index') }}">Reservasi Saya</a>
+                    <a class="nav-link <?php echo e(request()->routeIs('reservasi.*') ? 'active fw-semibold' : ''); ?>" href="<?php echo e(route('reservasi.index')); ?>">Reservasi Saya</a>
                 </li>
-                @endauth
+                <?php endif; ?>
             </ul>
             <ul class="navbar-nav align-items-lg-center gap-lg-2">
-                @auth
-                    @if(auth()->user()->isAdmin())
+                <?php if(auth()->guard()->check()): ?>
+                    <?php if(auth()->user()->isAdmin()): ?>
                     <li class="nav-item">
-                        <a class="btn btn-sm btn-outline-light" href="{{ route('admin.dashboard') }}">
+                        <a class="btn btn-sm btn-outline-light" href="<?php echo e(route('admin.dashboard')); ?>">
                             <i class="bi bi-speedometer2"></i> Dashboard Laboran
                         </a>
                     </li>
-                    @elseif(auth()->user()->isAslab())
+                    <?php elseif(auth()->user()->isAslab()): ?>
                     <li class="nav-item">
-                        <a class="btn btn-sm btn-outline-light" href="{{ route('aslab.dashboard') }}">
+                        <a class="btn btn-sm btn-outline-light" href="<?php echo e(route('aslab.dashboard')); ?>">
                             <i class="bi bi-speedometer2"></i> Dashboard Aslab
                         </a>
                     </li>
-                    @endif
+                    <?php endif; ?>
                     <li class="nav-item">
-                        @include('partials.notification-bell')
+                        <?php echo $__env->make('partials.notification-bell', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle"></i> {{ auth()->user()->nama }}
+                            <i class="bi bi-person-circle"></i> <?php echo e(auth()->user()->nama); ?>
+
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="{{ route('reservasi.index') }}">Reservasi Saya</a></li>
-                            <li><a class="dropdown-item" href="{{ route('profile.show') }}"><i class="bi bi-person me-1"></i>Profil Saya</a></li>
+                            <li><a class="dropdown-item" href="<?php echo e(route('reservasi.index')); ?>">Reservasi Saya</a></li>
+                            <li><a class="dropdown-item" href="<?php echo e(route('profile.show')); ?>"><i class="bi bi-person me-1"></i>Profil Saya</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
+                                <form action="<?php echo e(route('logout')); ?>" method="POST">
+                                    <?php echo csrf_field(); ?>
                                     <button type="submit" class="dropdown-item text-danger">Keluar</button>
                                 </form>
                             </li>
                         </ul>
                     </li>
-                @else
-                    <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Masuk</a></li>
+                <?php else: ?>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo e(route('login')); ?>">Masuk</a></li>
                     <li class="nav-item">
-                        <a class="btn btn-light btn-sm fw-semibold" href="{{ route('register') }}">Daftar</a>
+                        <a class="btn btn-light btn-sm fw-semibold" href="<?php echo e(route('register')); ?>">Daftar</a>
                     </li>
-                @endauth
+                <?php endif; ?>
             </ul>
         </div>
     </div>
 </nav>
 
-@include('partials.toast-flash')
+<?php echo $__env->make('partials.toast-flash', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 <main>
-    @yield('content')
+    <?php echo $__env->yieldContent('content'); ?>
 </main>
 
 <footer class="mt-5 py-5">
@@ -181,12 +182,12 @@
             </div>
         </div>
         <hr class="border-secondary my-4">
-        <p class="small text-center mb-0">&copy; {{ date('Y') }} RuangLab. Seluruh hak cipta dilindungi.</p>
+        <p class="small text-center mb-0">&copy; <?php echo e(date('Y')); ?> RuangLab. Seluruh hak cipta dilindungi.</p>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-@include('partials.confirm-modal')
-@stack('scripts')
+<?php echo $__env->make('partials.confirm-modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
-</html>
+</html><?php /**PATH D:\RuangLab\RuangLab\resources\views/layouts/app.blade.php ENDPATH**/ ?>
